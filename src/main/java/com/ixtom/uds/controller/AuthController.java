@@ -61,23 +61,23 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@ModelAttribute RegisterRequest req, HttpServletRequest request, HttpServletResponse response) {
-        if (userAuthRepo.findByEmail(req.email()).isPresent()
-            || userProfileRepo.findByUsername(req.username()).isPresent()) {
-            return "register"; // email/username already used
-        }
-
         // TODO
+        // move to a service
         // error messages
-        // check password requirements
-        // check valid username chars
+        // password requirements
 
-        if (StringUtils.stringLengthInRange(req.username(), 2, 25)) {
+        if (StringUtils.isValidUsername(req.username())) {
             return "register";
         }
+
         if (!StringUtils.isEmail(req.email())) {
             return "register";
         }
 
+        if (userAuthRepo.findByEmail(req.email()).isPresent()
+            || userProfileRepo.findByUsername(req.username()).isPresent()) {
+            return "register"; // email/username already used
+        }
 
         UserAuth userAuth = new UserAuth(req.email(), passwordEncoder.encode(req.password()), null, Role.USER);
         UserProfile profile = new UserProfile(userAuth.getId(), req.username());
