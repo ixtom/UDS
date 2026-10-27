@@ -20,6 +20,7 @@ import com.ixtom.uds.model.UserProfile;
 import com.ixtom.uds.model.UserAuth.Role;
 import com.ixtom.uds.repository.UserAuthRepository;
 import com.ixtom.uds.repository.UserProfileRepository;
+import com.ixtom.uds.utils.StringUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -64,6 +65,19 @@ public class AuthController {
             || userProfileRepo.findByUsername(req.username()).isPresent()) {
             return "register"; // email/username already used
         }
+
+        // TODO
+        // error messages
+        // check password requirements
+        // check valid username chars
+
+        if (StringUtils.stringLengthInRange(req.username(), 2, 25)) {
+            return "register";
+        }
+        if (!StringUtils.isEmail(req.email())) {
+            return "register";
+        }
+
 
         UserAuth userAuth = new UserAuth(req.email(), passwordEncoder.encode(req.password()), null, Role.USER);
         UserProfile profile = new UserProfile(userAuth.getId(), req.username());
