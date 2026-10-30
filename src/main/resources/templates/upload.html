@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<body>
+    <form th:action="@{/upload}" th:object="${newduel}" method="post">
+    <div class="mb-3">
+        <label for="yturl" class="form-label">YouTube URL</label>
+        <input type="url" th:field="*{yturl}" class="form-control" id="yturl" placeholder="Enter YT URL" required>
+        <span th:if="${#fields.hasErrors('yturl')}" th:errors="*{yturl}"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+    
+</body>
+</html>
