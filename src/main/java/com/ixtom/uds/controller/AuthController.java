@@ -64,7 +64,6 @@ public class AuthController {
         // TODO
         // move to a service
         // error messages
-        // password requirements
 
         if (StringUtils.isValidUsername(req.username())) {
             return "register";
@@ -77,6 +76,10 @@ public class AuthController {
         if (userAuthRepo.findByEmail(req.email()).isPresent()
             || userProfileRepo.findByUsername(req.username()).isPresent()) {
             return "register"; // email/username already used
+        }
+
+        if (!StringUtils.isGoodPassword(req.password())) {
+            return "register";
         }
 
         UserAuth userAuth = new UserAuth(req.email(), passwordEncoder.encode(req.password()), null, Role.USER);

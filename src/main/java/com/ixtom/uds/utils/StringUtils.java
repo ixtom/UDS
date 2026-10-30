@@ -27,6 +27,11 @@ public class StringUtils {
         return s != null && s.matches(regex);
     }
 
+    public static boolean isGoodPassword(String s) {
+        // one upper & lower char, one number, one non alphanumeric and at least 8 chars
+        return s != null && s.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$");
+    }
+
     public static String toTitleCase(String s) {
         if (s == null || s.isBlank()) {
             return null;
