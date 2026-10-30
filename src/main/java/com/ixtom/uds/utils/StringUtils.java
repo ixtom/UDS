@@ -17,7 +17,7 @@ public class StringUtils {
     }
 
     public static boolean isValidUsername(String s) {
-        String regex = "^[a-z0-9._-]{2, 25}$";
+        String regex = "^[a-z0-9_]{2,25}$";
         return s != null && s.matches(regex);
     }
 

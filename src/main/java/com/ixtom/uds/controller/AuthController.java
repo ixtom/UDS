@@ -65,7 +65,7 @@ public class AuthController {
         // move to a service
         // error messages
 
-        if (StringUtils.isValidUsername(req.username())) {
+        if (!StringUtils.isValidUsername(req.username())) {
             return "register";
         }
 
@@ -108,5 +108,10 @@ public class AuthController {
         return "index";
     }
 
-    private record RegisterRequest(String email, String username, String password) {}
+    public record RegisterRequest(String email, String username, String password) {
+        public RegisterRequest{
+            email = email.strip();
+            username = username.strip();
+        }
+    }
 }
