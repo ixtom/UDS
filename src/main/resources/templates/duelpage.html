@@ -6,8 +6,13 @@
     <title>Duel</title>
 </head>
 <body>
-    <iframe width="420" height="345" th:src="${newduel.yturl}">
+    <iframe width="420" height="345" th:src="|https://www.youtube-nocookie.com/embed/${newduel.videoid1}|">
 </iframe>
+    <iframe width="420" height="345" th:src="|https://www.youtube-nocookie.com/embed/${newduel.videoid2}|">
+</iframe>
+<p th:text="${newduel.roundnum}"></p>
+
+<p th:text="${newduel.duel_description}"></p>
     
 </body>
 </html>
