@@ -20,6 +20,7 @@ import com.ixtom.uds.model.UserProfile;
 import com.ixtom.uds.model.UserAuth.Role;
 import com.ixtom.uds.repository.UserAuthRepository;
 import com.ixtom.uds.repository.UserProfileRepository;
+import com.ixtom.uds.utils.StringUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -60,9 +61,25 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@ModelAttribute RegisterRequest req, HttpServletRequest request, HttpServletResponse response) {
+        // TODO
+        // move to a service
+        // error messages
+
+        if (!StringUtils.isValidUsername(req.username())) {
+            return "register";
+        }
+
+        if (!StringUtils.isEmail(req.email())) {
+            return "register";
+        }
+
         if (userAuthRepo.findByEmail(req.email()).isPresent()
             || userProfileRepo.findByUsername(req.username()).isPresent()) {
             return "register"; // email/username already used
+        }
+
+        if (!StringUtils.isGoodPassword(req.password())) {
+            return "register";
         }
 
         UserAuth userAuth = new UserAuth(req.email(), passwordEncoder.encode(req.password()), null, Role.USER);
@@ -91,5 +108,10 @@ public class AuthController {
         return "index";
     }
 
-    private record RegisterRequest(String email, String username, String password) {}
+    public record RegisterRequest(String email, String username, String password) {
+        public RegisterRequest{
+            email = email.strip();
+            username = username.strip();
+        }
+    }
 }
