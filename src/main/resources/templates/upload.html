@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Duel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+    <form th:action="@{/upload}" th:object="${newduel}" method="post">
+    <div class="mb-3">
+        <label for="rawurl1" class="form-label">Enter YouTube URL</label>
+        <input type="text" th:field="*{rawurl1}" class="form-control-sm" placeholder="Youtube URL" required>
+        <span th:if="${#fields.hasErrors('rawurl1')}" th:errors="*{rawurl1}"></span>
+    </div>
+    <div class="mb-3">
+        <label for="rawurl2" class="form-label">Enter YouTube URL</label>
+        <input type="text" th:field="*{rawurl2}" class="form-control-sm" placeholder="Youtube URL" required>
+        <span th:if="${#fields.hasErrors('rawurl2')}" th:errors="*{rawurl2}"></span>
+    </div>
+    <div class="mb-3">
+        <label for="roundnum" class="form-label">Enter Round Number</label>
+        <input type="text" th:field="*{roundnum}" class="form-control-sm" required>
+        <span th:if="${#fields.hasErrors('roundnum')}" th:errors="*{roundnum}"></span>
+    </div>
+    <div class="mb-3">
+        <label for="duel_description" class="form-label">Enter Duelist Backstory</label>
+        <textarea th:field="*{duel_description}" rows="10" maxlength="5000" class="form-control" placeholder="Backstory"></textarea>
+        <span th:if="${#fields.hasErrors('duel_description')}" th:errors="*{duel_description}"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+    
+</body>
+</html>
