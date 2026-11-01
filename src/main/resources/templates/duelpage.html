@@ -11,9 +11,9 @@
             <h1 th:text="${newduel.defaultTitle}">Duel Title</h1>
         </header>
         <!-- BANNER HERE!!!! -->
-        <section class="description" th:if="${newduel.duel_description != null}">
+        <section class="description" th:if="${newduel.description != null}">
             <h2>Description</h2>
-            <p th:text="${newduel.duel_description}">Backstory goes here</p>
+            <p th:text="${newduel.description}">Backstory goes here</p>
         </section>
 
         <section class="matchup">

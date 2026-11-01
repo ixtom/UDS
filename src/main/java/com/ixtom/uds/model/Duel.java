@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Pattern;
 
 @Entity 
 @Table(name="DuelData")
-public class DuelData {
+public class Duel {
 
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class DuelData {
     private String title;
 
     @Column(columnDefinition = "TEXT")
-    private String duel_description;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "user1_id")
@@ -67,7 +67,7 @@ public class DuelData {
         message = "Invalid YouTube URL")
     private String rawurl2;
 
-    public DuelData() {
+    public Duel() {
     }
 
     public Long getId() {
@@ -127,12 +127,12 @@ public class DuelData {
         this.title = title;
     }
 
-    public String getDuel_description() {
-        return duel_description;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDuel_description(String duel_description) {
-        this.duel_description = duel_description;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public UserProfile getUser1() {

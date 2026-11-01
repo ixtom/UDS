@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.ixtom.uds.model.DuelData;
+import com.ixtom.uds.model.Duel;
 import com.ixtom.uds.repository.DuelRepository;
 
 import jakarta.validation.Valid;
@@ -27,20 +27,20 @@ public class DuelController {
 
     @GetMapping("/upload")
     public String uploadVideo(Model model){
-        model.addAttribute("newduel", new DuelData());
+        model.addAttribute("newduel", new Duel());
         return "upload";
     }
 
     @GetMapping("/duelpage/{id}")
     public String duelPage(@PathVariable Long id, Model model){
-        DuelData duel = duelRepo.findById(id)
+        Duel duel = duelRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("newduel", duel);
         return "duelpage";
     }
 
     @PostMapping("/upload")
-    public String upload(@Valid @ModelAttribute("newduel") DuelData newduel, BindingResult binding_result, Model model){
+    public String upload(@Valid @ModelAttribute("newduel") Duel newduel, BindingResult binding_result, Model model){
         if(binding_result.hasErrors()){
             return "upload";
         }
@@ -58,7 +58,7 @@ public class DuelController {
 
         newduel.setVideoid1(videoid1);
         newduel.setVideoid2(videoid2);
-        DuelData savedDuel = duelRepo.save(newduel);
+        Duel savedDuel = duelRepo.save(newduel);
         return "redirect:/duelpage/" + savedDuel.getId();
     }
 
