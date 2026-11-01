@@ -5,25 +5,57 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Pattern;
 
 @Entity 
 @Table(name="DuelData")
 public class DuelData {
+
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Pattern(regexp = "^[a-zA-Z0-9_-]{11}$", message = "Invalid YouTube video ID")
-    @Column(name = "videoid1", length = 11, nullable = false)
-    private String videoid1;
 
-    @Pattern(regexp = "^[a-zA-Z0-9_-]{11}$", message = "Invalid YouTube video ID")
-    @Column(name = "videoid2", length = 11, nullable = false)
-    private String videoid2;
+    // change in later iteration to
+//  @ManytoOne
+//  @JoinColumn(name = "competition_id")
+//  private Competition competition
+    private Long competition;
+    private Integer roundnum;
+
+    // change in later iteration
+    private String duelBanner;
+
+    private String title;
 
     @Column(columnDefinition = "TEXT")
     private String duel_description;
+
+    @ManyToOne
+    @JoinColumn(name = "user1_id")
+    private UserProfile user1;
+
+    @ManyToOne
+    @JoinColumn(name = "user2_id")
+    private UserProfile user2;
+
+    @ManyToOne
+    @JoinColumn(name = "duelist1_id")
+    private Duelist duelist1;
+
+    @ManyToOne
+    @JoinColumn(name = "duelist2_id")
+    private Duelist duelist2;
+
+    @Pattern(regexp = "^[a-zA-Z0-9_-]{11}$", message = "Invalid YouTube video ID")
+    @Column(name = "videoid1", length = 11)
+    private String videoid1;
+
+    @Pattern(regexp = "^[a-zA-Z0-9_-]{11}$", message = "Invalid YouTube video ID")
+    @Column(name = "videoid2", length = 11)
+    private String videoid2;
 
     @Pattern(
         regexp = "^(https?://)?(www\\.|m\\.)?(youtube\\.com/(watch\\?.*v=|embed/|shorts/)|youtu\\.be/)[a-zA-Z0-9_-]{11}.*$",
@@ -35,21 +67,7 @@ public class DuelData {
         message = "Invalid YouTube URL")
     private String rawurl2;
 
-    private Long userid1;
-    private Long userid2;
-    private Long duelistid1;
-    private Long duelistid2;
-    private int roundnum;
-    
     public DuelData() {
-    }
-
-    public String getVideoid1() {
-        return videoid1;
-    }
-
-    public void setVideoid1(String videoid1) {
-        this.videoid1 = videoid1;
     }
 
     public Long getId() {
@@ -60,12 +78,101 @@ public class DuelData {
         this.id = id;
     }
 
+    // change to Competition type later
+    public Long getCompetition() {
+        return competition;
+    }
+
+    // change to Competition type later
+    public void setCompetition(Long competition) {
+        this.competition = competition;
+    }
+
+    public Integer getRoundnum() {
+        return roundnum;
+    }
+
+    public void setRoundnum(Integer roundnum) {
+        this.roundnum = roundnum;
+    }
+
+    public String getDuelBanner() {
+        return duelBanner;
+    }
+
+    public void setDuelBanner(String duelBanner) {
+        this.duelBanner = duelBanner;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDefaultTitle() {
+        if (title != null && !title.isBlank()) {
+            return title;
+        }
+        String matchup = nameOf(duelist1) + " vs " + nameOf(duelist2);
+        if (roundnum != null) {
+            return "Round " + roundnum + ": " + matchup;
+        }
+        return matchup;
+    }
+
+    private String nameOf(Duelist d) {
+        return (d != null && d.getName() != null) ? d.getName() : "TBD";
+    }
+    
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getDuel_description() {
         return duel_description;
     }
 
     public void setDuel_description(String duel_description) {
         this.duel_description = duel_description;
+    }
+
+    public UserProfile getUser1() {
+        return user1;
+    }
+
+    public void setUser1(UserProfile user1) {
+        this.user1 = user1;
+    }
+
+    public UserProfile getUser2() {
+        return user2;
+    }
+
+    public void setUser2(UserProfile user2) {
+        this.user2 = user2;
+    }
+
+    public Duelist getDuelist1() {
+        return duelist1;
+    }
+
+    public void setDuelist1(Duelist duelist1) {
+        this.duelist1 = duelist1;
+    }
+
+    public Duelist getDuelist2() {
+        return duelist2;
+    }
+
+    public void setDuelist2(Duelist duelist2) {
+        this.duelist2 = duelist2;
+    }
+
+    public String getVideoid1() {
+        return videoid1;
+    }
+
+    public void setVideoid1(String videoid1) {
+        this.videoid1 = videoid1;
     }
 
     public String getVideoid2() {
@@ -91,45 +198,6 @@ public class DuelData {
     public void setRawurl2(String rawurl2) {
         this.rawurl2 = rawurl2;
     }
-
-    public Long getUserid1() {
-        return userid1;
-    }
-
-    public void setUserid1(Long userid1) {
-        this.userid1 = userid1;
-    }
-
-    public Long getUserid2() {
-        return userid2;
-    }
-
-    public void setUserid2(Long userid2) {
-        this.userid2 = userid2;
-    }
-
-    public Long getDuelistid1() {
-        return duelistid1;
-    }
-
-    public void setDuelistid1(Long duelistid1) {
-        this.duelistid1 = duelistid1;
-    }
-
-    public Long getDuelistid2() {
-        return duelistid2;
-    }
-
-    public void setDuelistid2(Long duelistid2) {
-        this.duelistid2 = duelistid2;
-    }
-
-    public int getRoundnum() {
-        return roundnum;
-    }
-
-    public void setRoundnum(int roundnum) {
-        this.roundnum = roundnum;
-    }
+    
     
 }

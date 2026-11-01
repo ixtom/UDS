@@ -6,13 +6,42 @@
     <title>Duel</title>
 </head>
 <body>
-    <iframe width="420" height="345" th:src="|https://www.youtube-nocookie.com/embed/${newduel.videoid1}|">
-</iframe>
-    <iframe width="420" height="345" th:src="|https://www.youtube-nocookie.com/embed/${newduel.videoid2}|">
-</iframe>
-<p th:text="${newduel.roundnum}"></p>
+    <main>
+        <header>
+            <h1 th:text="${newduel.defaultTitle}">Duel Title</h1>
+        </header>
+        <!-- BANNER HERE!!!! -->
+        <section class="description" th:if="${newduel.duel_description != null}">
+            <h2>Description</h2>
+            <p th:text="${newduel.duel_description}">Backstory goes here</p>
+        </section>
 
-<p th:text="${newduel.duel_description}"></p>
-    
+        <section class="matchup">
+            <article class="competitor competitor-1">
+                <h2>Competitor 1</h2>
+                <p>Animator: <span th:text="${newduel.user1?.username}">TBD</span></p>
+                <p>Duelist: <span th:text="${newduel.duelist1?.name}">TBD</span></p>
+            </article>
+            <article class="competitor competitor-2">
+                <h2>Competitor 2</h2>
+                <p>Animator: <span th:text="${newduel.user2?.username}">TBD</span></p>
+                <p>Duelist: <span th:text="${newduel.duelist2?.name}">TBD</span></p>
+            </article>
+        </section>
+
+        <section class="animations" th:if="${newduel.videoid1 != null or newduel.videoid2 != null}">
+            <h2>Animations</h2>
+            <iframe th:if="${newduel.videoid1 != null}" width="420" height="345" 
+                    th:src="|https://www.youtube-nocookie.com/embed/${newduel.videoid1}|"></iframe>
+            <iframe th:if="${newduel.videoid2 != null}" width="420" height="345" 
+                    th:src="|https://www.youtube-nocookie.com/embed/${newduel.videoid2}|"></iframe>       
+        </section>
+        <!-- Voting Section!!!
+        <section class="voting">
+            <h2>Vote</h2>
+            <p>Voting coming soon.</p>
+        </section>
+        -->
+    </main>
 </body>
 </html>
