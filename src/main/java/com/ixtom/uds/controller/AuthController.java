@@ -103,11 +103,6 @@ public class AuthController {
         return "redirect:/";
     }
 
-    @GetMapping("/")
-    public String getIndex() {
-        return "index";
-    }
-
     public record RegisterRequest(String email, String username, String password) {
         public RegisterRequest{
             email = email.strip();
