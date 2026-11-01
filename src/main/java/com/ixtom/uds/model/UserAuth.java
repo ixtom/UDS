@@ -84,16 +84,16 @@ public class UserAuth {
         return role;
     }
 
-    public void setDiscordId(Long discord_id) {
-        this.discordId = discord_id;
+    public void setDiscordId(Long discordId) {
+        this.discordId = discordId;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setHashedPassword(String hashed_password) {
-        this.hashedPassword = hashed_password;
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
     }
 
     public void setRole(Role role) {

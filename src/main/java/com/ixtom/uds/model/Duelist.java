@@ -7,13 +7,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
-@Entity 
+@Entity
+@Table(name="Duelist")
 public class Duelist {
-    @Id 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String name;
 
     private String title;
@@ -21,13 +25,13 @@ public class Duelist {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne 
+    @ManyToOne
     @JoinColumn(name = "owner_id")
     private UserProfile owner;
 
     // change to image in later iteration
     private String photo;
-    
+
     // change to youtube link in later iteration
     private String demo;
 
@@ -90,9 +94,6 @@ public class Duelist {
     public void setDemo(String demo) {
         this.demo = demo;
     }
-    
-    // List of Competitions to be done in later iteration
 
-    
-    
+    // List of Competitions to be done in later iteration
 }

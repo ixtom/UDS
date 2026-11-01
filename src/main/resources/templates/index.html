@@ -8,13 +8,13 @@
 <body>
     index
 
-    <div th:if="${user != null}">
+    <div th:if="${currentUser != null}">
         <form th:action="@{/logout}" method="post">
             <input type="submit" value="logout" />
         </form>
         <a href="/upload">Upload new duel</a>
     </div>
-    <a th:if="${user == null}" href="/login">Login</a>
+    <a th:if="${currentUser == null}" href="/login">Login</a>
 
     <div>
         <tr th:each="duel: ${duels}">
