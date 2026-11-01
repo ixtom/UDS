@@ -24,12 +24,12 @@
         <span th:if="${#fields.hasErrors('roundnum')}" th:errors="*{roundnum}"></span>
     </div>
     <div class="mb-3">
-        <label for="duel_description" class="form-label">Enter Duelist Backstory</label>
+        <label for="duel_description" class="form-label">Enter Duel Description</label>
         <textarea th:field="*{duel_description}" rows="10" maxlength="5000" class="form-control" placeholder="Backstory"></textarea>
         <span th:if="${#fields.hasErrors('duel_description')}" th:errors="*{duel_description}"></span>
     </div>
     <button type="submit" class="btn btn-primary">Upload</button>
 </form>
-    
+
 </body>
 </html>
