@@ -12,6 +12,7 @@
         <form th:action="@{/logout}" method="post">
             <input type="submit" value="logout" />
         </form>
+        <a href="/change-password">Change password</a>
         <a href="/upload">Upload new duel</a>
     </div>
     <a th:if="${currentUser == null}" href="/login">Login</a>

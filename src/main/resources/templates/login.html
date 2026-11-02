@@ -6,6 +6,7 @@
     <title>Document</title>
 </head>
 <body>
+    <p th:if="${param.passwordChanged}" role="status">Password changed. Please sign in with your new password.</p>
     <form th:action="@{/login}" method="post">
         <label for="email">Email</label>
         <input type="email" id="email" name="email" />

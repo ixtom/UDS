@@ -20,6 +20,7 @@ public class SecurityConfig {
             auth
                 // .requestMatchers("/admin/**")
                 // .hasRole("ADMIN")
+                .requestMatchers("/change-password").authenticated()
                 .anyRequest()
                 .permitAll()
         )
