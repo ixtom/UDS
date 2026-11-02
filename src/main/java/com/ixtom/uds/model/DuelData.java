@@ -10,19 +10,17 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
 
-@Entity 
+@Entity
 @Table(name="DuelData")
 public class DuelData {
 
-    @Id 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // change in later iteration to
-//  @ManytoOne
-//  @JoinColumn(name = "competition_id")
-//  private Competition competition
-    private Long competition;
+    @ManyToOne
+    @JoinColumn(name = "competition_id")
+    private Competition competition;
     private Integer roundnum;
 
     // change in later iteration
@@ -61,7 +59,7 @@ public class DuelData {
         regexp = "^(https?://)?(www\\.|m\\.)?(youtube\\.com/(watch\\?.*v=|embed/|shorts/)|youtu\\.be/)[a-zA-Z0-9_-]{11}.*$",
         message = "Invalid YouTube URL")
     private String rawurl1;
-    
+
     @Pattern(
         regexp = "^(https?://)?(www\\.|m\\.)?(youtube\\.com/(watch\\?.*v=|embed/|shorts/)|youtu\\.be/)[a-zA-Z0-9_-]{11}.*$",
         message = "Invalid YouTube URL")
@@ -78,13 +76,11 @@ public class DuelData {
         this.id = id;
     }
 
-    // change to Competition type later
-    public Long getCompetition() {
+    public Competition getCompetition() {
         return competition;
     }
 
-    // change to Competition type later
-    public void setCompetition(Long competition) {
+    public void setCompetition(Competition competition) {
         this.competition = competition;
     }
 
@@ -122,7 +118,7 @@ public class DuelData {
     private String nameOf(Duelist d) {
         return (d != null && d.getName() != null) ? d.getName() : "TBD";
     }
-    
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -198,6 +194,4 @@ public class DuelData {
     public void setRawurl2(String rawurl2) {
         this.rawurl2 = rawurl2;
     }
-    
-    
 }
