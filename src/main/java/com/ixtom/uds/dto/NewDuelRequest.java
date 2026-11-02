@@ -1,6 +1,7 @@
 package com.ixtom.uds.dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -11,6 +12,7 @@ public record NewDuelRequest(
     @Pattern(regexp = YOUTUBE_URL_REGEX, message = "Invalid YouTube URL")
     String url2,
 
+    @NotNull
     @Min(1)
     Integer round,
 

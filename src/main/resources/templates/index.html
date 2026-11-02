@@ -17,10 +17,10 @@
     <a th:if="${currentUser == null}" href="/login">Login</a>
 
     <div>
-        <tr th:each="duel: ${duels}">
+        <div th:each="duel: ${duels}">
             <a th:href="@{/duelpage/{id}(id=${duel.id})}" th:text="${duel.getDefaultTitle}"></a>
             <br>
-        </tr>
+        </div>
     </div>
 </body>
 </html>

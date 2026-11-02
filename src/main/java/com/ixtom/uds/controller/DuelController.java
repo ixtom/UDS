@@ -49,11 +49,11 @@ public class DuelController {
         String videoid2 = getYouTubeId(duelReq.url2());
 
         if (videoid1 == null) {
-            binding_result.rejectValue("rawurl1", "invalid", "Could not extract YouTube ID");
+            binding_result.rejectValue("url1", "invalid", "Could not extract YouTube ID");
         }
 
         if (videoid2 == null) {
-            binding_result.rejectValue("rawurl2", "invalid", "Could not extract YouTube ID");
+            binding_result.rejectValue("url2", "invalid", "Could not extract YouTube ID");
         }
 
         if (binding_result.hasErrors()) {
