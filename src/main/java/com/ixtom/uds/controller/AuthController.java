@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.ixtom.uds.dto.RegisterRequest;
 import com.ixtom.uds.model.UserAuth;
 import com.ixtom.uds.model.UserAuthPrincipal;
 import com.ixtom.uds.model.UserProfile;
@@ -62,7 +63,7 @@ public class AuthController {
     @PostMapping("/register")
     public String register(@ModelAttribute RegisterRequest req, HttpServletRequest request, HttpServletResponse response) {
         // TODO
-        // move to a service
+        // use @Valid
         // error messages
 
         if (!StringUtils.isValidUsername(req.username())) {
@@ -101,17 +102,5 @@ public class AuthController {
         securityContextRepository.saveContext(context, request, response);
 
         return "redirect:/";
-    }
-
-    @GetMapping("/")
-    public String getIndex() {
-        return "index";
-    }
-
-    public record RegisterRequest(String email, String username, String password) {
-        public RegisterRequest{
-            email = email.strip();
-            username = username.strip();
-        }
     }
 }

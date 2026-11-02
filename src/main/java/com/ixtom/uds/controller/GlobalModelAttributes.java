@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @ControllerAdvice
 public class GlobalModelAttributes {
 
-    @ModelAttribute("user")
+    @ModelAttribute("currentUser")
     public UserAuthPrincipal addUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
