@@ -13,6 +13,7 @@
             <input type="submit" value="logout" />
         </form>
         <a sec:authorize="hasRole('ADMIN')" href="/admin/users">View registered users</a><br>
+        <a href="/change-password">Change password</a>
         <a href="/upload">Upload new duel</a>
     </div>
     <a th:if="${currentUser == null}" href="/login">Login</a>
