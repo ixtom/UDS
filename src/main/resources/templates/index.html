@@ -12,6 +12,7 @@
         <form th:action="@{/logout}" method="post">
             <input type="submit" value="logout" />
         </form>
+        <a sec:authorize="hasRole('ADMIN')" href="/admin/users">View registered users</a><br>
         <a href="/upload">Upload new duel</a>
     </div>
     <a th:if="${currentUser == null}" href="/login">Login</a>
