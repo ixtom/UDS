@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,6 +17,7 @@ import com.ixtom.uds.model.UserAuthPrincipal;
 import com.ixtom.uds.repository.UserAuthRepository;
 import com.ixtom.uds.utils.StringUtils;
 
+import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -37,11 +39,16 @@ public class PasswordController {
     @PostMapping("/change-password")
     public String changePassword(
             @AuthenticationPrincipal UserAuthPrincipal principal,
-            @ModelAttribute ChangePasswordRequest form,
+            @Valid @ModelAttribute ChangePasswordRequest form, BindingResult bindingResult,
             Model model, Authentication authentication,
             HttpServletRequest request, HttpServletResponse response) {
         if (principal == null) {
             return "redirect:/login";
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("error", "Fill in all three password fields.");
+            return "change-password";
         }
 
         String currentPassword = form.currentPassword();

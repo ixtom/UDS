@@ -32,4 +32,16 @@ build/
 ### VS Code ###
 .vscode/
 
+# macOS
+.DS_Store
+.AppleDouble
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
 .env
