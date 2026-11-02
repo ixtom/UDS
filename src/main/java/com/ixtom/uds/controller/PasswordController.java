@@ -1,7 +1,5 @@
 package com.ixtom.uds.controller;
 
-import java.nio.charset.StandardCharsets;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,8 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
+import com.ixtom.uds.dto.ChangePasswordRequest;
 import com.ixtom.uds.model.UserAuth;
 import com.ixtom.uds.model.UserAuthPrincipal;
 import com.ixtom.uds.repository.UserAuthRepository;
@@ -38,26 +37,26 @@ public class PasswordController {
     @PostMapping("/change-password")
     public String changePassword(
             @AuthenticationPrincipal UserAuthPrincipal principal,
-            @RequestParam(defaultValue = "") String currentPassword,
-            @RequestParam(defaultValue = "") String newPassword,
-            @RequestParam(defaultValue = "") String confirmPassword,
+            @ModelAttribute ChangePasswordRequest form,
             Model model, Authentication authentication,
             HttpServletRequest request, HttpServletResponse response) {
         if (principal == null) {
             return "redirect:/login";
         }
 
+        String currentPassword = form.currentPassword();
+        String newPassword = form.newPassword();
+        String confirmPassword = form.confirmPassword();
+
         UserAuth user = userAuthRepo.findById(principal.getId()).orElse(null);
         if (user == null || currentPassword.isEmpty()
-                || currentPassword.getBytes(StandardCharsets.UTF_8).length > 72
                 || !passwordEncoder.matches(currentPassword, user.getHashedPassword())) {
             model.addAttribute("error", "Your current password is incorrect.");
             return "change-password";
         }
 
-        if (!StringUtils.isGoodPassword(newPassword)
-                || newPassword.getBytes(StandardCharsets.UTF_8).length > 72) {
-            model.addAttribute("error", "Use at least 8 characters, including uppercase, lowercase, a number and a special character. The maximum is 72 UTF-8 bytes.");
+        if (!StringUtils.isGoodPassword(newPassword)) {
+            model.addAttribute("error", "Use at least 8 characters, including uppercase, lowercase, a number and a special character.");
             return "change-password";
         }
 
