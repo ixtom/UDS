@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.ixtom.uds.model.DuelData;
+import com.ixtom.uds.dto.NewDuelRequest;
+import com.ixtom.uds.model.Duel;
 import com.ixtom.uds.repository.DuelRepository;
 
 import jakarta.validation.Valid;
@@ -20,61 +21,69 @@ import jakarta.validation.Valid;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
-@Controller 
+@Controller
 public class DuelController {
-    @Autowired 
+
+    @Autowired
     private DuelRepository duelRepo;
 
     @GetMapping("/upload")
-    public String uploadVideo(Model model){
-        model.addAttribute("newduel", new DuelData());
+    public String getUpload(Model model) {
+        model.addAttribute("newduel", new NewDuelRequest(null, null, null, null));
+
         return "upload";
     }
 
     @GetMapping("/duelpage/{id}")
-    public String duelPage(@PathVariable Long id, Model model){
-        DuelData duel = duelRepo.findById(id)
+    public String duelPage(@PathVariable Long id, Model model) {
+        Duel duel = duelRepo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        model.addAttribute("newduel", duel);
+        model.addAttribute("duel", duel);
+
         return "duelpage";
     }
 
     @PostMapping("/upload")
-    public String upload(@Valid @ModelAttribute("newduel") DuelData newduel, BindingResult binding_result, Model model){
-        if(binding_result.hasErrors()){
+    public String upload(@Valid @ModelAttribute("newduel") NewDuelRequest duelReq, BindingResult binding_result, Model model) {
+        String videoid1 = getYouTubeId(duelReq.url1());
+        String videoid2 = getYouTubeId(duelReq.url2());
+
+        if (videoid1 == null) {
+            binding_result.rejectValue("url1", "invalid", "Could not extract YouTube ID");
+        }
+
+        if (videoid2 == null) {
+            binding_result.rejectValue("url2", "invalid", "Could not extract YouTube ID");
+        }
+
+        if (binding_result.hasErrors()) {
             return "upload";
         }
 
-        String videoid1 = getYouTubeId(newduel.getRawurl1());
-        String videoid2 = getYouTubeId(newduel.getRawurl2());
-        if(videoid1 == null){
-            binding_result.rejectValue("rawurl1", "invalid", "Could not extract YouTube ID");
-        }
+        Duel newDuel = new Duel();
 
-        if(videoid2 == null){
-            binding_result.rejectValue("rawurl2", "invalid", "Could not extract YouTube ID");
+        newDuel.setVideoid1(videoid1);
+        newDuel.setVideoid2(videoid2);
+        newDuel.setRoundnum(duelReq.round());
+        newDuel.setDescription(duelReq.description());
 
-        }
-
-        newduel.setVideoid1(videoid1);
-        newduel.setVideoid2(videoid2);
-        DuelData savedDuel = duelRepo.save(newduel);
+        Duel savedDuel = duelRepo.save(newDuel);
         return "redirect:/duelpage/" + savedDuel.getId();
     }
 
     public String getYouTubeId (String youTubeUrl) {
         if (youTubeUrl == null || youTubeUrl.isBlank()) {
-        return null;
+            return null;
         }
+
         String pattern = "(?:youtu\\.be/|embed/|videos/|shorts/|(?:watch\\?|.*[&?])v=)([^#&?\\s]{11})";
         Pattern compiledPattern = Pattern.compile(pattern);
         Matcher matcher = compiledPattern.matcher(youTubeUrl);
-        if(matcher.find()){
+
+        if (matcher.find()) {
             return matcher.group(1);
         }
+
         return null;
-
     }
-    
-
 }

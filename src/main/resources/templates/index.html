@@ -8,9 +8,19 @@
 <body>
     index
 
-    <form th:if="${user != null}" th:action="@{/logout}" method="post">
-        <input type="submit" value="logout" />
-    </form>
-    <a th:if="${user == null}" href="/login">Login</a>
+    <div th:if="${currentUser != null}">
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" value="logout" />
+        </form>
+        <a href="/upload">Upload new duel</a>
+    </div>
+    <a th:if="${currentUser == null}" href="/login">Login</a>
+
+    <div>
+        <div th:each="duel: ${duels}">
+            <a th:href="@{/duelpage/{id}(id=${duel.id})}" th:text="${duel.getDefaultTitle}"></a>
+            <br>
+        </div>
+    </div>
 </body>
 </html>

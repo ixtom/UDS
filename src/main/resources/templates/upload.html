@@ -9,27 +9,27 @@
 <body>
     <form th:action="@{/upload}" th:object="${newduel}" method="post">
     <div class="mb-3">
-        <label for="rawurl1" class="form-label">Enter YouTube URL</label>
-        <input type="text" th:field="*{rawurl1}" class="form-control-sm" placeholder="Youtube URL" required>
-        <span th:if="${#fields.hasErrors('rawurl1')}" th:errors="*{rawurl1}"></span>
+        <label for="url1" class="form-label">Enter YouTube URL</label>
+        <input type="text" th:field="*{url1}" class="form-control-sm" placeholder="Youtube URL" required>
+        <span th:if="${#fields.hasErrors('url1')}" th:errors="*{url1}"></span>
     </div>
     <div class="mb-3">
-        <label for="rawurl2" class="form-label">Enter YouTube URL</label>
-        <input type="text" th:field="*{rawurl2}" class="form-control-sm" placeholder="Youtube URL" required>
-        <span th:if="${#fields.hasErrors('rawurl2')}" th:errors="*{rawurl2}"></span>
+        <label for="url2" class="form-label">Enter YouTube URL</label>
+        <input type="text" th:field="*{url2}" class="form-control-sm" placeholder="Youtube URL" required>
+        <span th:if="${#fields.hasErrors('url2')}" th:errors="*{url2}"></span>
     </div>
     <div class="mb-3">
-        <label for="roundnum" class="form-label">Enter Round Number</label>
-        <input type="text" th:field="*{roundnum}" class="form-control-sm" required>
-        <span th:if="${#fields.hasErrors('roundnum')}" th:errors="*{roundnum}"></span>
+        <label for="round" class="form-label">Enter Round Number</label>
+        <input type="text" th:field="*{round}" class="form-control-sm" required>
+        <span th:if="${#fields.hasErrors('round')}" th:errors="*{round}"></span>
     </div>
     <div class="mb-3">
-        <label for="duel_description" class="form-label">Enter Duelist Backstory</label>
-        <textarea th:field="*{duel_description}" rows="10" maxlength="5000" class="form-control" placeholder="Backstory"></textarea>
-        <span th:if="${#fields.hasErrors('duel_description')}" th:errors="*{duel_description}"></span>
+        <label for="description" class="form-label">Enter Duel Description</label>
+        <textarea th:field="*{description}" rows="10" maxlength="5000" class="form-control" placeholder="Description"></textarea>
+        <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
     </div>
     <button type="submit" class="btn btn-primary">Upload</button>
 </form>
-    
+
 </body>
 </html>

@@ -10,11 +10,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
 
-@Entity 
+@Entity
 @Table(name="DuelData")
-public class DuelData {
+public class Duel {
 
-    @Id 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -31,7 +31,7 @@ public class DuelData {
     private String title;
 
     @Column(columnDefinition = "TEXT")
-    private String duel_description;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "user1_id")
@@ -57,18 +57,7 @@ public class DuelData {
     @Column(name = "videoid2", length = 11)
     private String videoid2;
 
-    @Pattern(
-        regexp = "^(https?://)?(www\\.|m\\.)?(youtube\\.com/(watch\\?.*v=|embed/|shorts/)|youtu\\.be/)[a-zA-Z0-9_-]{11}.*$",
-        message = "Invalid YouTube URL")
-    private String rawurl1;
-    
-    @Pattern(
-        regexp = "^(https?://)?(www\\.|m\\.)?(youtube\\.com/(watch\\?.*v=|embed/|shorts/)|youtu\\.be/)[a-zA-Z0-9_-]{11}.*$",
-        message = "Invalid YouTube URL")
-    private String rawurl2;
-
-    public DuelData() {
-    }
+    public Duel() {}
 
     public Long getId() {
         return id;
@@ -122,17 +111,17 @@ public class DuelData {
     private String nameOf(Duelist d) {
         return (d != null && d.getName() != null) ? d.getName() : "TBD";
     }
-    
+
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getDuel_description() {
-        return duel_description;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDuel_description(String duel_description) {
-        this.duel_description = duel_description;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public UserProfile getUser1() {
@@ -182,22 +171,4 @@ public class DuelData {
     public void setVideoid2(String videoid2) {
         this.videoid2 = videoid2;
     }
-
-    public String getRawurl1() {
-        return rawurl1;
-    }
-
-    public void setRawurl1(String rawurl1) {
-        this.rawurl1 = rawurl1;
-    }
-
-    public String getRawurl2() {
-        return rawurl2;
-    }
-
-    public void setRawurl2(String rawurl2) {
-        this.rawurl2 = rawurl2;
-    }
-    
-    
 }
