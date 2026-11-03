@@ -32,48 +32,38 @@ public class PasswordController {
     }
 
     @GetMapping("/change-password")
-    public String getChangePassword() {
+    public String getChangePassword(Model model) {
+        model.addAttribute("changePasswordRequest", new ChangePasswordRequest(null, null, null));
         return "change-password";
     }
 
     @PostMapping("/change-password")
     public String changePassword(
             @AuthenticationPrincipal UserAuthPrincipal principal,
-            @Valid @ModelAttribute ChangePasswordRequest form, BindingResult bindingResult,
+            @Valid @ModelAttribute ChangePasswordRequest req, BindingResult bindingResult,
             Model model, Authentication authentication,
             HttpServletRequest request, HttpServletResponse response) {
         if (principal == null) {
             return "redirect:/login";
         }
 
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("error", "Fill in all three password fields.");
-            return "change-password";
-        }
-
-        String currentPassword = form.currentPassword();
-        String newPassword = form.newPassword();
-        String confirmPassword = form.confirmPassword();
+        String newPassword = req.newPassword();
 
         UserAuth user = userAuthRepo.findById(principal.getId()).orElse(null);
-        if (user == null || currentPassword.isEmpty()
-                || !passwordEncoder.matches(currentPassword, user.getHashedPassword())) {
-            model.addAttribute("error", "Your current password is incorrect.");
-            return "change-password";
+        if (user == null || !passwordEncoder.matches(req.currentPassword(), user.getHashedPassword())) {
+            bindingResult.rejectValue("currentPassword", "wrongpassword", "Incorrect password");
         }
 
-        if (!StringUtils.isGoodPassword(newPassword)) {
-            model.addAttribute("error", "Password must be at least 8 characters and include an uppercase letter, a lowercase letter, and a symbol.");
-            return "change-password";
+        if (!newPassword.equals(req.confirmPassword())) {
+            bindingResult.rejectValue("confirmPassword", "mismachingpasswords", "Passwords do not match");
         }
 
-        if (!newPassword.equals(confirmPassword)) {
-            model.addAttribute("error", "The new passwords do not match.");
-            return "change-password";
-        }
-        
         if (passwordEncoder.matches(newPassword, user.getHashedPassword())) {
             model.addAttribute("error", "Choose a password different from your current password.");
+            bindingResult.rejectValue("newPassword", "samepassworderror", "Password must not be your current password");
+        }
+
+        if (bindingResult.hasErrors()) {
             return "change-password";
         }
 
