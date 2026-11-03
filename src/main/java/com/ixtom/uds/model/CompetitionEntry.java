@@ -13,7 +13,7 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "CompetitionParticipant")
+@Table(name = "CompetitionEntry")
 public class CompetitionEntry {
 
     @EmbeddedId
