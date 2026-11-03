@@ -44,19 +44,19 @@ public class DuelController {
     }
 
     @PostMapping("/upload")
-    public String upload(@Valid @ModelAttribute("newduel") NewDuelRequest duelReq, BindingResult binding_result, Model model) {
+    public String upload(@Valid @ModelAttribute("newduel") NewDuelRequest duelReq, BindingResult bindingResult, Model model) {
         String videoid1 = getYouTubeId(duelReq.url1());
         String videoid2 = getYouTubeId(duelReq.url2());
 
         if (videoid1 == null) {
-            binding_result.rejectValue("url1", "invalid", "Could not extract YouTube ID");
+            bindingResult.rejectValue("url1", "invalid", "Could not extract YouTube ID");
         }
 
         if (videoid2 == null) {
-            binding_result.rejectValue("url2", "invalid", "Could not extract YouTube ID");
+            bindingResult.rejectValue("url2", "invalid", "Could not extract YouTube ID");
         }
 
-        if (binding_result.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return "upload";
         }
 

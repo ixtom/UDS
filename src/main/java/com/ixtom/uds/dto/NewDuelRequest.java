@@ -6,17 +6,17 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record NewDuelRequest(
-    @Pattern(regexp = YOUTUBE_URL_REGEX, message = "Invalid YouTube URL")
+    @Pattern(regexp = YOUTUBE_URL_REGEX, message = "Enter a valid YouTube link, like https://www.youtube.com/watch?v=anc123XYZ_-")
     String url1,
 
-    @Pattern(regexp = YOUTUBE_URL_REGEX, message = "Invalid YouTube URL")
+    @Pattern(regexp = YOUTUBE_URL_REGEX, message = "Enter a valid YouTube link, like https://www.youtube.com/watch?v=anc123XYZ_-")
     String url2,
 
-    @NotNull
-    @Min(1)
+    @NotNull(message = "Enter a round number.")
+    @Min(value = 1, message = "round number must be 1 or higher.")
     Integer round,
 
-    @Size(max = 5000)
+    @Size(max = 5000, message = "Description. must be 5000 characters or less.")
     String description
 ) {
     private static final String YOUTUBE_URL_REGEX =

@@ -63,7 +63,7 @@ public class PasswordController {
         }
 
         if (!StringUtils.isGoodPassword(newPassword)) {
-            model.addAttribute("error", "Use at least 8 characters, including uppercase, lowercase, a number and a special character.");
+            model.addAttribute("error", "Password must be at least 8 characters and include an uppercase letter, a lowercase letter, and a symbol.");
             return "change-password";
         }
 
