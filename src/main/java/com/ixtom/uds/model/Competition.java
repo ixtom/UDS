@@ -4,17 +4,17 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.Audited.Table;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 
 @Entity
-@Table(name = "Competition")
+@Table (name = "Competition")
 public class Competition {
 
     @Id
