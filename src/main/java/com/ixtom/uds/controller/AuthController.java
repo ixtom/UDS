@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,10 +22,11 @@ import com.ixtom.uds.model.UserProfile;
 import com.ixtom.uds.model.UserAuth.Role;
 import com.ixtom.uds.repository.UserAuthRepository;
 import com.ixtom.uds.repository.UserProfileRepository;
-import com.ixtom.uds.utils.StringUtils;
 
+import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 @Controller
 public class AuthController {
@@ -56,30 +58,27 @@ public class AuthController {
     }
 
     @GetMapping("/register")
-    public String getRegister() {
+    public String getRegister(Model model) {
+        model.addAttribute("registerRequest", new RegisterRequest(null, null, null));
         return "register";
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute RegisterRequest req, HttpServletRequest request, HttpServletResponse response) {
-        // TODO
-        // use @Valid
-        // error messages
-
-        if (!StringUtils.isValidUsername(req.username())) {
+    public String register(@Valid @ModelAttribute RegisterRequest req, BindingResult bindingResult, HttpServletRequest request, HttpServletResponse response) {
+        
+        if (bindingResult.hasErrors()) {
             return "register";
         }
 
-        if (!StringUtils.isEmail(req.email())) {
-            return "register";
+        if (userAuthRepo.findByEmail(req.email()).isPresent()) {
+            bindingResult.rejectValue("email", "taken", "An account with that email already exists.");
         }
 
-        if (userAuthRepo.findByEmail(req.email()).isPresent()
-            || userProfileRepo.findByUsername(req.username()).isPresent()) {
-            return "register"; // email/username already used
+        if (userProfileRepo.findByUsername(req.username()).isPresent()) {
+            bindingResult.rejectValue("username", "taken", "An account with that username already exists.");
         }
 
-        if (!StringUtils.isGoodPassword(req.password())) {
+        if (bindingResult.hasErrors()) {
             return "register";
         }
 
