@@ -65,10 +65,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute RegisterRequest req, BindingResult bindingResult, HttpServletRequest request, HttpServletResponse response) {
-        
-        if (bindingResult.hasErrors()) {
-            return "register";
-        }
 
         if (userAuthRepo.findByEmail(req.email()).isPresent()) {
             bindingResult.rejectValue("email", "taken", "An account with that email already exists.");
