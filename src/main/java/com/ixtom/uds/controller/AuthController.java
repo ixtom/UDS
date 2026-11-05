@@ -157,32 +157,24 @@ public class AuthController {
             return "error/4xx";
         }
 
-        switch (oauthHandlerService.onOAuthLogin(provider, action)) {
-			case LINK_SUCCESS:
-				break;
-			case NOT_IMPLEMENTED:
-			    oauthHandlerService.deauthorize(provider);
-				break;
-			case OAUTH_ALREADY_LINKED:
-			    oauthHandlerService.deauthorize(provider);
-				break;
-			case OAUTH_CLIENT_MISSING:
-				break;
-			case USER_ALREADY_LINKED:
-                oauthHandlerService.deauthorize(provider);
-				break;
-			case USER_UNAUTHORIZED:
-                oauthHandlerService.deauthorize(provider);
-				break;
-			default:
-				break;
+        String errMsg = switch (oauthHandlerService.onOAuthLogin(provider, action)) {
+			case LINK_SUCCESS -> null;
+			case NOT_IMPLEMENTED -> "not implemented";
+			case OAUTH_ALREADY_LINKED -> "this account is already linked to another account!";
+			case OAUTH_CLIENT_MISSING -> "could not get oauth client"; // should not happen
+			case USER_ALREADY_LINKED -> "your account is already linked to " + provider;
+			case USER_UNAUTHORIZED -> errMsg = "please log in first";
+        };
+
+        if (errMsg != null) {
+            oauthHandlerService.deauthorize(provider);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            // TODO: proper error page
+            return "error/4xx";
         }
 
         response.setStatus(HttpServletResponse.SC_SEE_OTHER);
-        if (returnPath != null) {
-            return "redirect:" + returnPath;
-        }
-        return "redirect:/";
+        return "redirect:" + ((returnPath != null) ? returnPath : "/");
     }
 
 	private static boolean timePassed(Instant start, Duration duration) {
