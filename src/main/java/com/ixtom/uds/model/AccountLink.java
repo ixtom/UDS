@@ -35,7 +35,23 @@ public class AccountLink {
         this.user = user;
     }
 
-    @Embeddable
+    public AccountLinkId getId() {
+		return id;
+	}
+
+	public void setId(AccountLinkId id) {
+		this.id = id;
+	}
+
+	public UserAuth getUser() {
+		return user;
+	}
+
+	public void setUser(UserAuth user) {
+		this.user = user;
+	}
+
+	@Embeddable
     public static class AccountLinkId implements Serializable {
 
         @Column(nullable = false)
@@ -67,5 +83,21 @@ public class AccountLink {
             hash = hash * 31 + Objects.hashCode(externalId);
             return hash;
         }
+
+		public String getProvider() {
+			return provider;
+		}
+
+		public void setProvider(String provider) {
+			this.provider = provider;
+		}
+
+		public String getExternalId() {
+			return externalId;
+		}
+
+		public void setExternalId(String externalId) {
+			this.externalId = externalId;
+		}
     }
 }

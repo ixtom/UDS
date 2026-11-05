@@ -91,7 +91,7 @@ public class AuthController {
             return "register";
         }
 
-        UserAuth userAuth = new UserAuth(req.email(), passwordEncoder.encode(req.password()), null, Role.USER);
+        UserAuth userAuth = new UserAuth(req.email(), passwordEncoder.encode(req.password()), Role.USER);
         UserProfile profile = new UserProfile(userAuth.getId(), req.username());
         userAuth.setProfile(profile);
         profile.setUserAuth(userAuth);

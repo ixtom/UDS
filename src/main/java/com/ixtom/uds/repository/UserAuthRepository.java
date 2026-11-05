@@ -8,5 +8,4 @@ import com.ixtom.uds.model.UserAuth;
 
 public interface UserAuthRepository extends JpaRepository<UserAuth, Long> {
     Optional<UserAuth> findByEmail(String email);
-    Optional<UserAuth> findByDiscordId(Long discordId);
 }
