@@ -1,14 +1,18 @@
 package com.ixtom.uds.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name="Duelist")
@@ -17,7 +21,7 @@ public class Duelist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @Column(nullable = false)
     private String name;
 
     private String title;
@@ -25,7 +29,7 @@ public class Duelist {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private UserProfile owner;
 
@@ -34,6 +38,9 @@ public class Duelist {
 
     // change to youtube link in later iteration
     private String demo;
+
+    @OneToMany(mappedBy = "duelist")
+    private List<CompetitionEntry> competitionEntries = new ArrayList<>();
 
     // methods
 

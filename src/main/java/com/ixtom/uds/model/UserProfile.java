@@ -1,11 +1,14 @@
 package com.ixtom.uds.model;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -20,6 +23,9 @@ public class UserProfile {
     private String username;
 
     // ...
+
+    @OneToMany(mappedBy = "owner")
+    private List<Duelist> duelists;
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId

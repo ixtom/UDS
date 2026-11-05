@@ -18,11 +18,9 @@ public class Duel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // change in later iteration to
-//  @ManytoOne
-//  @JoinColumn(name = "competition_id")
-//  private Competition competition
-    private Long competition;
+    @ManyToOne
+    @JoinColumn(name = "competition_id")
+    private Competition competition;
     private Integer roundnum;
 
     // change in later iteration
@@ -67,13 +65,11 @@ public class Duel {
         this.id = id;
     }
 
-    // change to Competition type later
-    public Long getCompetition() {
+    public Competition getCompetition() {
         return competition;
     }
 
-    // change to Competition type later
-    public void setCompetition(Long competition) {
+    public void setCompetition(Competition competition) {
         this.competition = competition;
     }
 
