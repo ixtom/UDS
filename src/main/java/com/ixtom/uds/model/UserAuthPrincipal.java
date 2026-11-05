@@ -9,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserAuthPrincipal implements UserDetails {
 
+    private static final long serialVersionUID = 2405847771722228562L;
+
     private Long id;
     private String username;
     private String email;
@@ -54,5 +56,10 @@ public class UserAuthPrincipal implements UserDetails {
 
     public String getHashedPassword() {
         return hashedPassword;
+    }
+
+    public boolean hasRole(String role) {
+        return getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("ROLE_" + role));
     }
 }
