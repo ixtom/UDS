@@ -15,9 +15,11 @@
             <td>Created</td>
         </tr>
         <tr th:each="userProfile : ${userProfiles}">
-            <!--TODO: link to profile-->
             <td th:text="${userProfile.id}"></td>
-            <td th:text="${userProfile.username}"></td>
+            <td>
+                <a th:href="@{/profile/{username}(username=${userProfile.username})}"
+                   th:text="${userProfile.username}"></a>
+            </td>
             <td th:text="${userProfile.userAuth.role}"></td>
             <td>
                 <svg th:if="${userProfile.userAuth.discordId != null}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
