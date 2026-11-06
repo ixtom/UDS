@@ -5,12 +5,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
@@ -33,9 +38,6 @@ public class UserAuth {
     @Column(nullable = false)
     private String hashedPassword;
 
-    @Column(unique = true)
-    private Long discordId;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -51,21 +53,19 @@ public class UserAuth {
     )
     private UserProfile profile;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<AccountLink> accountLinks = new ArrayList<>();
+
     public UserAuth() {}
 
-    public UserAuth(String email, String hashedPassword, Long discordId, Role role) {
+    public UserAuth(String email, String hashedPassword, Role role) {
         this.email = email;
         this.hashedPassword = hashedPassword;
-        this.discordId = discordId;
         this.role = role;
     }
 
     public Instant getCreatedAt() {
         return createdAt;
-    }
-
-    public Long getDiscordId() {
-        return discordId;
     }
 
     public String getEmail() {
@@ -82,10 +82,6 @@ public class UserAuth {
 
     public Role getRole() {
         return role;
-    }
-
-    public void setDiscordId(Long discordId) {
-        this.discordId = discordId;
     }
 
     public void setEmail(String email) {
@@ -111,4 +107,8 @@ public class UserAuth {
     public void setProfile(UserProfile profile) {
         this.profile = profile;
     }
+
+	public List<AccountLink> getAccountLinks() {
+		return accountLinks;
+	}
 }
