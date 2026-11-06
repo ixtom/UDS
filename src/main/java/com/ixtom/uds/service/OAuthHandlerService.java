@@ -46,9 +46,10 @@ public class OAuthHandlerService {
     }
 
     public void deauthorize(String provider) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        // TODO: revoke token
-        authorizedClientService.removeAuthorizedClient(provider, auth.getName());
+        switch (provider) {
+        	case "discord": discordService.revokeToken();
+        	default: {};
+        };
     }
 
     public ActionResult linkCurrentUser(String provider) {
