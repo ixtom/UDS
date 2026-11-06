@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ixtom.uds.dto.RegisterRequest;
 import com.ixtom.uds.model.UserAuth;
@@ -112,18 +114,21 @@ public class AuthController {
         return "redirect:/";
     }
 
-    @GetMapping("/link/discord")
-    public String linkDiscord(HttpSession session) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    @GetMapping("/link/{provider}")
+    public String linkDiscord(@PathVariable String provider, HttpSession session, @AuthenticationPrincipal UserAuthPrincipal principal) {
+        if (!oauthHandlerService.isProvider(provider)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
 
-        if (auth == null || !(auth.getPrincipal() instanceof UserAuthPrincipal)) {
+        if (principal == null) {
             return "redirect:/login";
         }
 
         session.setAttribute("oauthAction", OAuthAction.LINK);
         session.setAttribute("oauthLinkStart", Instant.now());
 
-        return "redirect:/oauth2/authorization/discord"; // oauth stuff will end up redirecting to /login/oauth2/code/{provider}
+        // this will end up redirecting to /login/oauth2/code/{provider}
+        return "redirect:/oauth2/authorization/" + provider;
     }
 
 
@@ -131,10 +136,8 @@ public class AuthController {
     public String postOAuthLogin(@PathVariable String provider, HttpSession session, HttpServletResponse response, Model model,
         @RequestParam(required = false) String error, @RequestParam(required = false) String error_description) {
 
-        if (error != null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            model.addAttribute("error", error + " " + error_description);
-            return "error/4xx";
+        if (!oauthHandlerService.isProvider(provider)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
         OAuthAction action = (OAuthAction) session.getAttribute("oauthAction");
@@ -147,29 +150,26 @@ public class AuthController {
 
         if (action == null || (action == OAuthAction.LINK && start == null)) {
             oauthHandlerService.deauthorize(provider);
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            model.addAttribute("error", "Invalid OAuth request");
-            return "error/4xx";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         } else if (action == OAuthAction.LINK && timePassed(start, oauthLinkTimeout)) {
             oauthHandlerService.deauthorize(provider);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (error != null) {
+            // TODO: display errors better
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            model.addAttribute("error", "Account link request timed out");
+            model.addAttribute("error", error + " " + error_description);
             return "error/4xx";
         }
 
-        String errMsg = switch (oauthHandlerService.onOAuthLogin(provider, action)) {
-			case LINK_SUCCESS -> null;
-			case NOT_IMPLEMENTED -> "not implemented";
-			case OAUTH_ALREADY_LINKED -> "this account is already linked to another account!";
-			case OAUTH_CLIENT_MISSING -> "could not get oauth client"; // should not happen
-			case USER_ALREADY_LINKED -> "your account is already linked to " + provider;
-			case USER_UNAUTHORIZED -> errMsg = "please log in first";
-        };
+        OAuthHandlerService.ActionResult result = oauthHandlerService.onOAuthLogin(provider, action);
 
-        if (errMsg != null) {
+        if (!result.success) {
+            // TODO: display errors better
             oauthHandlerService.deauthorize(provider);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            // TODO: proper error page
+            model.addAttribute("error", result.message);
             return "error/4xx";
         }
 

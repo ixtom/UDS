@@ -5,6 +5,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Service;
 
 import com.ixtom.uds.model.AccountLink;
@@ -28,6 +30,12 @@ public class OAuthHandlerService {
     @Autowired
     private DiscordService discordService;
 
+    @Autowired
+    private ClientRegistrationRepository clientRegistrationRepository;
+
+    public boolean isProvider(String provider) {
+        return clientRegistrationRepository.findByRegistrationId(provider) != null;
+    }
 
     public ActionResult onOAuthLogin(String provider, OAuthAction action) {
         return switch (action) {
@@ -50,7 +58,7 @@ public class OAuthHandlerService {
         if (auth == null || !(auth.getPrincipal() instanceof UserAuthPrincipal principle)) {
             return ActionResult.USER_UNAUTHORIZED;
         } else if (client == null) {
-            return ActionResult.OAUTH_CLIENT_MISSING;
+            return ActionResult.OAUTH_AUTHORIZATION_MISSING;
         } else if (linkedAccountRepo.findByProviderAndUserId(provider, principle.getId()).isPresent()) {
             return ActionResult.USER_ALREADY_LINKED;
         }
@@ -78,14 +86,21 @@ public class OAuthHandlerService {
     }
 
     public static enum ActionResult {
-        USER_UNAUTHORIZED,
-        OAUTH_CLIENT_MISSING,
+        USER_UNAUTHORIZED(false, "Please log in first"),
+        OAUTH_AUTHORIZATION_MISSING(false, "No OAuth authorization found"),
+        USER_ALREADY_LINKED(false, "Your account is already linked to this service"),
+        OAUTH_ALREADY_LINKED(false, "This account is already linked to another user"),
+        LINK_SUCCESS(true, "Linked account successfully"),
 
-        USER_ALREADY_LINKED,
-        OAUTH_ALREADY_LINKED,
-        LINK_SUCCESS,
-
-        NOT_IMPLEMENTED,
+        NOT_IMPLEMENTED(false, "Unimplemented"),
         ;
+
+        public final boolean success;
+        public final String message;
+
+        ActionResult(boolean success, String message) {
+			this.success = success;
+			this.message = message;
+        }
     }
 }
