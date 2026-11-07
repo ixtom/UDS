@@ -7,7 +7,36 @@
 </head>
 <body>
     <main>
-        <h1 th:text="${username}">Username</h1>
+        <header>
+            <svg width="80" height="80" viewBox="0 0 80 80" role="img" aria-label="Default profile picture">
+                <circle cx="40" cy="40" r="40" fill="#e5e7eb" />
+                <circle cx="40" cy="30" r="12" fill="#4b5563" />
+                <path d="M17 64a23 18 0 0 1 46 0z" fill="#4b5563" />
+            </svg>
+            <h1 th:text="${profile.username}">Username</h1>
+            <a th:if="${isOwner}" th:href="@{/account/profile/edit}">Edit Profile</a>
+        </header>
+
+        <section>
+            <h2>Duelists</h2>
+            <p th:if="${duelistNames.empty}">No duelists yet.</p>
+            <ul th:unless="${duelistNames.empty}">
+                <li th:each="name : ${duelistNames}" th:text="${name}"></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>About Me</h2>
+            <p th:if="${#strings.isEmpty(profile.bio)}">No bio yet.</p>
+            <p th:unless="${#strings.isEmpty(profile.bio)}" style="white-space: pre-wrap" th:text="${profile.bio}"></p>
+        </section>
+
+        <section>
+            <h2>Social Platforms</h2>
+            <p th:if="${#strings.isEmpty(profile.youtubeUrl) and #strings.isEmpty(profile.instagramUrl)}">No social links yet.</p>
+            <a th:unless="${#strings.isEmpty(profile.youtubeUrl)}" th:href="${profile.youtubeUrl}">YouTube</a>
+            <a th:unless="${#strings.isEmpty(profile.instagramUrl)}" th:href="${profile.instagramUrl}">Instagram</a>
+        </section>
     </main>
 </body>
 </html>

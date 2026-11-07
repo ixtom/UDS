@@ -22,7 +22,14 @@ public class UserProfile {
     @Column(unique = true)
     private String username;
 
-    // ...
+    @Column(length = 2000)
+    private String bio;
+
+    @Column(length = 2048)
+    private String youtubeUrl;
+
+    @Column(length = 2048)
+    private String instagramUrl;
 
     @OneToMany(mappedBy = "owner")
     private List<Duelist> duelists;
@@ -53,6 +60,30 @@ public class UserProfile {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getYoutubeUrl() {
+        return youtubeUrl;
+    }
+
+    public void setYoutubeUrl(String youtubeUrl) {
+        this.youtubeUrl = youtubeUrl;
+    }
+
+    public String getInstagramUrl() {
+        return instagramUrl;
+    }
+
+    public void setInstagramUrl(String instagramUrl) {
+        this.instagramUrl = instagramUrl;
     }
 
     public UserAuth getUserAuth() {
