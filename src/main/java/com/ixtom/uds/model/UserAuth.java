@@ -111,4 +111,13 @@ public class UserAuth {
 	public List<AccountLink> getAccountLinks() {
 		return accountLinks;
 	}
+
+	public boolean hasRole(String role) {
+        return this.role.toString().equals(role);
+    }
+
+    public boolean isProviderLinked(String provider) {
+        return accountLinks != null && accountLinks.stream()
+                .anyMatch(link -> link.getId().getProvider().equals(provider));
+    }
 }

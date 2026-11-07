@@ -8,6 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -27,6 +29,9 @@ public class DiscordService { // MAYBE: make a interface for oauth info
 
     @Autowired
     private OAuth2AuthorizedClientService authorizedClientService;
+
+    @Autowired
+    private ClientRegistrationRepository clientRegistrationRepository;
 
     public DiscordService(RestClient restClient) {
         this.restClient = restClient.mutate().baseUrl(baseUrl).build();
@@ -62,9 +67,13 @@ public class DiscordService { // MAYBE: make a interface for oauth info
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("token", client.getAccessToken().getTokenValue());
 
+        ClientRegistration registration =
+            clientRegistrationRepository.findByRegistrationId("discord");
+
         try {
             restClient.post()
                 .uri("/oauth2/token/revoke")
+                .headers(headers -> headers.setBasicAuth(registration.getClientId(), registration.getClientSecret()))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(body)
                 .retrieve()
