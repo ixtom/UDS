@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+    <h1 th:text="${duelist.name}"></h1>
+    <p th:if="${!#strings.isEmpty(duelist.title)}" th:text="|&OpenCurlyDoubleQuote;${duelist.title}&CloseCurlyDoubleQuote;|"></p>
+    <div>
+        <div >
+            <div>
+                <!-- Placeholder image -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="256" height="512" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z"/>
+                </svg>
+            </div>
+
+            <p>Created by <a th:href="@{/profile/{username}(username=${duelist.owner.username})}" th:text="${duelist.owner.username}"></a></p>
+        </div>
+
+        <div>
+            <div th:if="${!#strings.isEmpty(duelist.demo)}" style="max-width: 50rem;">
+                <div th:insert="~{fragments/yt :: embed(videoId=${duelist.demo})}"></div>
+            </div>
+
+            <main>
+                <h2>Description / Backstory</h2>
+                <p th:text="${duelist.description}" style="white-space: pre-line;"></p>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

@@ -21,6 +21,6 @@ public record NewDuelRequest(
 
     String duelBanner 
 ) {
-    private static final String YOUTUBE_URL_REGEX =
+    public static final String YOUTUBE_URL_REGEX =
         "^(https?://)?(www\\.|m\\.)?(youtube\\.com/(watch\\?.*v=|embed/|shorts/)|youtu\\.be/)[a-zA-Z0-9_-]{11}.*$";
 }

@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name="Duelist")
@@ -36,7 +37,7 @@ public class Duelist {
     // change to image in later iteration
     private String photo;
 
-    // change to youtube link in later iteration
+    @Pattern(regexp = "^[a-zA-Z0-9_-]{11}$")
     private String demo;
 
     @OneToMany(mappedBy = "duelist")
@@ -45,6 +46,14 @@ public class Duelist {
     // methods
 
     public Duelist() {}
+
+    public Duelist(String name, String title, String description, String demo, String photo) {
+        this.name = name;
+        this.title = title;
+        this.description = description;
+        this.demo = demo;
+        this.photo = photo;
+    }
 
     public Long getId() {
         return id;
