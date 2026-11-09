@@ -33,7 +33,7 @@ Platform and discovery will round out the website, tying everything together by 
 ## APIs
 
 Discord for login (Oauth 2\) [docs](https://docs.discord.com/developers/topics/oauth2)  
-Discord for user date (profile picture, username/user ID) [docs](https://docs.discord.com/developers/reference)  
+Discord for user data (profile picture, username/user ID) [docs](https://docs.discord.com/developers/reference)  
 Potentially:  
 Email via gmail [docs](https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages/send)  
 Turnstile (captcha) [docs](https://www.cloudflare.com/products/turnstile/)  
