@@ -29,7 +29,7 @@ public class DuelController {
 
     @GetMapping("/upload")
     public String getUpload(Model model) {
-        model.addAttribute("newduel", new NewDuelRequest(null, null, null, null));
+        model.addAttribute("newduel", new NewDuelRequest(null, null, null, null, null));
 
         return "upload";
     }
@@ -66,6 +66,7 @@ public class DuelController {
         newDuel.setVideoid2(videoid2);
         newDuel.setRoundnum(duelReq.round());
         newDuel.setDescription(duelReq.description());
+        newDuel.setDuelBanner(duelReq.duelBanner());
 
         Duel savedDuel = duelRepo.save(newDuel);
         return "redirect:/duelpage/" + savedDuel.getId();

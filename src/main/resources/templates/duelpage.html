@@ -11,6 +11,8 @@
             <h1 th:text="${duel.defaultTitle}">Duel Title</h1>
         </header>
         <!-- BANNER HERE!!!! -->
+         <img th:if="${duel?.duelBanner != null}" th:src="${duel.duelBanner}" alt = "Duel Banner"
+         style="width: 100%; max-width: 1584px; aspect-ratio: 4 / 1; object-fit: cover; display: block;">
         <section class="description" th:if="${duel.description != null}">
             <h2>Description</h2>
             <p th:text="${duel.description}">Backstory goes here</p>
