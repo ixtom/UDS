@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Competitions</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-4">
+    <a th:href="@{/admin/competitions/new}" class="btn btn-primary mb-3">Create new competition</a>
+
+    <div th:each="c : ${competitions}">
+        <span th:text="${c.title}"></span> -
+        <span th:text="${c.start}"></span>
+    </div>
+</body>
+</html>
