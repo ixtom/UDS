@@ -13,6 +13,7 @@
             <input type="submit" value="logout" />
         </form>
         <a th:if="${currentUser.hasRole('ADMIN')}" href="/admin/users">View registered users</a><br>
+        <a th:href="@{/account/profile/edit}">Edit Profile</a>
         <a href="/change-password">Change password</a>
         <a href="/link/discord" th:if="${!currentUser.isProviderLinked('discord')}">Link Discord</a>
         <a href="/upload">Upload new duel</a>

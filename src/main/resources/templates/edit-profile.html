@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile</title>
+</head>
+<body>
+    <main>
+        <h1>Edit Profile</h1>
+        <form th:action="@{/account/profile/edit}" th:object="${editProfile}" method="post">
+            <p>
+                <label for="bio">About Me (up to 2000 characters)</label><br>
+                <textarea th:field="*{bio}" maxlength="2000" rows="6"></textarea>
+                <span th:errors="*{bio}"></span>
+            </p>
+            <p>
+                <label for="youtubeUrl">YouTube link (optional)</label>
+                <input type="url" th:field="*{youtubeUrl}" maxlength="2048">
+                <span th:errors="*{youtubeUrl}"></span>
+            </p>
+            <p>
+                <label for="instagramUrl">Instagram link (optional)</label>
+                <input type="url" th:field="*{instagramUrl}" maxlength="2048">
+                <span th:errors="*{instagramUrl}"></span>
+            </p>
+            
+            <!-- We can add more Social links at another date -->
+            <button type="submit">Save Profile</button>
+        </form>
+    </main>
+</body>
+</html>

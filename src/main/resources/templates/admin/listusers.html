@@ -15,9 +15,11 @@
             <td>Created</td>
         </tr>
         <tr th:each="userProfile : ${userProfiles}">
-            <!--TODO: link to profile-->
             <td th:text="${userProfile.id}"></td>
-            <td th:text="${userProfile.username}"></td>
+            <td>
+                <a th:href="@{/profile/{username}(username=${userProfile.username})}"
+                   th:text="${userProfile.username}"></a>
+            </td>
             <td th:text="${userProfile.userAuth.role}"></td>
             <td>
                 <img th:each="link : ${userProfile.userAuth.accountLinks}"
