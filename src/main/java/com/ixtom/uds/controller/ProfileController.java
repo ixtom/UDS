@@ -40,8 +40,8 @@ public class ProfileController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("profile", profile);
         model.addAttribute("isOwner", currentUser != null && profile.getId().equals(currentUser.getId()));
-        model.addAttribute("duelistNames", duelistRepository.findByOwnerIdOrderByNameAsc(profile.getId())
-                .stream().map(Duelist::getName).toList());
+        model.addAttribute("duelists", duelistRepository.findByOwnerIdOrderByNameAsc(profile.getId()));
+
         return "profile";
     }
 

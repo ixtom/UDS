@@ -19,6 +19,6 @@ public record NewDuelRequest(
     @Size(max = 5000, message = "Description. must be 5000 characters or less.")
     String description
 ) {
-    private static final String YOUTUBE_URL_REGEX =
+    public static final String YOUTUBE_URL_REGEX =
         "^(https?://)?(www\\.|m\\.)?(youtube\\.com/(watch\\?.*v=|embed/|shorts/)|youtu\\.be/)[a-zA-Z0-9_-]{11}.*$";
 }
