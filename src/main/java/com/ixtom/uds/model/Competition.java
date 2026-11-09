@@ -2,16 +2,20 @@ package com.ixtom.uds.model;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table (name = "Competition")
@@ -21,20 +25,28 @@ public class Competition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+	@NotBlank 
+	private String title;
+
     private Instant start;
 
-    @Min(1)
-    private int rounds;
+	@ManyToMany
+	@JoinTable(
+		name = "competition_roster",
+		joinColumns = @JoinColumn(name = "competition_id"),
+		inverseJoinColumns = @JoinColumn(name = "user_profile_id")
+	)
+	private Set<UserProfile> roster = new HashSet<>();
 
     @OneToMany(mappedBy = "competition")
-    private List<CompetitionEntry> participants = new ArrayList<>();
+    private List<CompetitionEntry> entries = new ArrayList<>();
 
     public Competition() {}
 
-    public Competition(Instant start, Integer rounds) {
-        this.start = start;
-        this.rounds = rounds;
-    }
+	public Competition(String title, Instant start) {
+		this.title = title;
+		this.start = start;
+	}
 
 	public Long getId() {
 		return id;
@@ -42,6 +54,14 @@ public class Competition {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public Instant getStart() {
@@ -52,15 +72,17 @@ public class Competition {
 		this.start = start;
 	}
 
-	public int getRounds() {
-		return rounds;
+	public Set<UserProfile> getRoster() {
+		return roster;
 	}
 
-	public void setRounds(int rounds) {
-		this.rounds = rounds;
+	public void setRoster(Set<UserProfile> roster) {
+		this.roster = roster;
 	}
 
-	public int getMaxParticipants() {
-	    return 1 << rounds; // 2 ^ rounds
+	public List<CompetitionEntry> getEntries() {
+		return entries;
 	}
+
+	
 }
