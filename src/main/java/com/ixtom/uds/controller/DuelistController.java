@@ -19,6 +19,7 @@ import com.ixtom.uds.model.UserAuthPrincipal;
 import com.ixtom.uds.model.UserProfile;
 import com.ixtom.uds.repository.DuelistRepository;
 import com.ixtom.uds.repository.UserProfileRepository;
+import com.ixtom.uds.utils.SocialLink;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -74,10 +75,9 @@ public class DuelistController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
-        String url = req.demoVideo();
-        String videoId = url.isEmpty() ? "" : DuelController.getYouTubeId(url);
-        if (videoId == null) {
-            bindingResult.rejectValue("demoVideo", "invalid", "Could not extract YouTube ID");
+        String videoId = SocialLink.YOUTUBE_VIDEO.extractId(req.demoVideo());
+        if (videoId == null) { // url was blank
+            videoId = "";
         }
 
         if (bindingResult.hasErrors()) {
@@ -113,12 +113,9 @@ public class DuelistController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        // TODO: other validation
-
-        String url = req.demoVideo();
-        String videoId = url.isEmpty() ? "" : DuelController.getYouTubeId(url);
+        String videoId = SocialLink.YOUTUBE_VIDEO.extractId(req.demoVideo());
         if (videoId == null) {
-            bindingResult.rejectValue("demoVideo", "invalid", "Could not extract YouTube ID");
+            videoId = "";
         }
 
         if (bindingResult.hasErrors()) {
