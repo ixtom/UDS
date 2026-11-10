@@ -13,5 +13,7 @@ public record CreateCompetitionRequest(
 
     @NotNull(message = "Pick a start date and time.")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    LocalDateTime start
+    LocalDateTime start,
+
+    String timezone
 ) {}

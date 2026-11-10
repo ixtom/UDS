@@ -30,7 +30,7 @@ public class CompetitionController {
     
     @GetMapping("/new")
     public String getCreateCompetition(Model model) {
-        model.addAttribute("newcompetition", new CreateCompetitionRequest(null, null));
+        model.addAttribute("newcompetition", new CreateCompetitionRequest(null, null, null));
 
         return "admin/competition-form";
     }
@@ -43,7 +43,13 @@ public class CompetitionController {
         Instant start = null;
 
         if (req.start() != null) {
-            start = req.start().atZone(ZoneId.of("America/Vancouver")).toInstant();
+            ZoneId zone;
+            try {
+                zone = ZoneId.of(req.timezone());
+            } catch (Exception e) {
+                zone = ZoneId.of("UTC");
+            }
+            start = req.start().atZone(zone).toInstant();
             
             if (!start.isAfter(Instant.now())) {
                 bindingResult.rejectValue("start", "invalid", "Start must be in the future.");
