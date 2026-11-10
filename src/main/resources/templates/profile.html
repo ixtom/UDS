@@ -19,9 +19,9 @@
 
         <section>
             <h2>Duelists</h2>
-            <p th:if="${duelistNames.empty}">No duelists yet.</p>
-            <ul th:unless="${duelistNames.empty}">
-                <li th:each="name : ${duelistNames}" th:text="${name}"></li>
+            <p th:if="${duelists.empty}">No duelists yet.</p>
+            <ul th:unless="${duelists.empty}">
+                <li th:each="duelist: ${duelists}"><a th:href="@{/duelist/{id}(id=${duelist.id})}" th:text="${duelist.name}"></a></li>
             </ul>
         </section>
 
