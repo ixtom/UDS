@@ -72,7 +72,7 @@ public class DuelController {
         return "redirect:/duelpage/" + savedDuel.getId();
     }
 
-    public String getYouTubeId (String youTubeUrl) {
+    public static String getYouTubeId (String youTubeUrl) {
         if (youTubeUrl == null || youTubeUrl.isBlank()) {
             return null;
         }
