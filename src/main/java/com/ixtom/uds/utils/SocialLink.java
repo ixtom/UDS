@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 
 public enum SocialLink {
     YOUTUBE_VIDEO("^(?:m\\.)?(?:youtube\\.com/(?:watch\\?.*v=|embed/|shorts/)|youtu\\.be/)([a-zA-Z0-9_-]{11}).*$"),
-    YOUTUBE_CHANNEL("^(?:m\\.)?youtube\\.com/@([a-zA-Z0-9._-]+)/?$"), // Maybe: allow just the handle by itself
-    INSTAGRAM_PROFILE("^instagram\\.com/([a-zA-Z0-9._]+)/?$"),
+    YOUTUBE_CHANNEL("^(?:m\\.)?youtube\\.com/@([a-zA-Z0-9._-]+)/?.*$"), // Maybe: allow just the handle by itself
+    INSTAGRAM_PROFILE("^instagram\\.com/([a-zA-Z0-9._]+)/?.*$"),
     ;
 
     private final Pattern pattern;
