@@ -1,0 +1,8 @@
+<div th:fragment="layout(sidebar, content)" style="display: flex;">
+    <!--<header th:replace="~{fragments/generic :: header}"></header>-->
+    <aside th:replace="${sidebar}"></aside>
+    <main>
+        <div th:replace="${content}"></div>
+    </main>
+    <!--<footer th:replace="~{fragments/generic :: footer}"></footer>-->
+</div>

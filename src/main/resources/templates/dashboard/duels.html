@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+    <div th:replace="~{fragments/dashboard-layout :: layout(~{dashboard/sidebar :: sidebar}, ~{::content})}">
+        <section th:fragment="content">
+            <h1>Duels</h1>
+            <!--Challenge duelist button-->
+            <table>
+                <thead>
+                    <tr>
+                        <td>Duelist</td>
+                        <td>Opponent</td>
+                        <td>Competition</td>
+                        <td><!--View--></td>
+                        <td><!--edit--></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="match: ${matches}">
+                        <td><a th:href="@{/duelist/{id}(id=${match.duelist.id})}" th:text="${match.duelist.name}"></a></td>
+                        <td><a th:href="@{/duelist/{id}(id=${match.opponent.id})}" th:text="${match.opponent.name}"></a></td>
+                        <!--dont have view competition page-->
+                        <td th:text="${match.duel.competition != null ? match.duel.competition.name : 'N/A'}"></td>
+                        <td><a th:href="@{/duelpage/{id}(id=${match.duel.id})}"><img src="/images/link-external.svg" alt="View duel"></a></td>
+                        <!--dont have edit duel page (replaces upload page)-->
+                        <td><a><img src="/images/pencil.svg" alt="edit"></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+    <div th:replace="~{fragments/dashboard-layout :: layout(~{dashboard/sidebar :: sidebar}, ~{::content})}">
+        <section th:fragment="content">
+            <h1>Duelists</h1>
+            <a href="/duelist/create">Create new duelist</a>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Title</td>
+                        <td>Competitions</td>
+                        <td><!--edit--></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="duelist: ${currentUser.profile.duelists}">
+                        <td><a th:href="@{/duelist/{id}(id=${duelist.id})}" th:text="${duelist.name}"></a></td>
+                        <td><th:block th:if="${!#strings.isEmpty(duelist.title)}" th:text="|&OpenCurlyDoubleQuote;${duelist.title}&CloseCurlyDoubleQuote;|"></th:block></td>
+                        <td th:text="${duelist.competitionEntries.size}"></td>
+                        <td><a th:href="@{/duelist/{id}/edit(id=${duelist.id})}"><img src="/images/pencil.svg" alt="edit"></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>
