@@ -1,7 +1,5 @@
 package com.ixtom.uds.controller;
 
-import java.net.URI;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ixtom.uds.dto.EditProfileRequest;
-import com.ixtom.uds.model.Duelist;
 import com.ixtom.uds.model.UserAuthPrincipal;
 import com.ixtom.uds.model.UserProfile;
 import com.ixtom.uds.repository.DuelistRepository;
@@ -57,12 +54,7 @@ public class ProfileController {
     public String saveProfile(@AuthenticationPrincipal UserAuthPrincipal currentUser,
             @Valid @ModelAttribute("editProfile") EditProfileRequest request, BindingResult errors) {
         UserProfile profile = ownProfile(currentUser);
-        if (!validPlatformUrl(request.youtubeUrl(), "youtube.com", "www.youtube.com", "youtu.be")) {
-            errors.rejectValue("youtubeUrl", "invalid", "Enter an HTTP or HTTPS YouTube link.");
-        }
-        if (!validPlatformUrl(request.instagramUrl(), "instagram.com", "www.instagram.com")) {
-            errors.rejectValue("instagramUrl", "invalid", "Enter an HTTP or HTTPS Instagram link.");
-        }
+
         if (errors.hasErrors()) {
             return "edit-profile";
         }
@@ -76,28 +68,5 @@ public class ProfileController {
     private UserProfile ownProfile(UserAuthPrincipal currentUser) {
         return userProfileRepository.findById(currentUser.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    private boolean validPlatformUrl(String value, String... allowedHosts) {
-        if (value.isEmpty()) {
-            return true;
-        }
-        try {
-            URI uri = URI.create(value);
-            String scheme = uri.getScheme();
-            boolean isWebUrl = "https".equalsIgnoreCase(scheme) || "http".equalsIgnoreCase(scheme);
-            if (!isWebUrl || uri.getUserInfo() != null) {
-                return false;
-            }
-
-            for (String allowedHost : allowedHosts) {
-                if (allowedHost.equalsIgnoreCase(uri.getHost())) {
-                    return true;
-                }
-            }
-            return false;
-        } catch (IllegalArgumentException exception) {
-            return false;
-        }
     }
 }

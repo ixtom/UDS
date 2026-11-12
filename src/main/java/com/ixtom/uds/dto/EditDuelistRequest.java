@@ -1,5 +1,8 @@
 package com.ixtom.uds.dto;
 
+import com.ixtom.uds.utils.SocialLink;
+import com.ixtom.uds.validation.OptionalSocialLink;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -23,9 +26,8 @@ public record EditDuelistRequest(
 
     // TODO: duelist photo
 
-    // TODO: refactor this into a custom annotation
     @NotNull
-    @Pattern(regexp = "^$|" + NewDuelRequest.YOUTUBE_URL_REGEX, message = "Enter a valid YouTube link, like https://www.youtube.com/watch?v=anc123XYZ_-")
+    @OptionalSocialLink(type = SocialLink.YOUTUBE_VIDEO)
     String demoVideo
 ) {
     public EditDuelistRequest {

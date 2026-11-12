@@ -1,11 +1,10 @@
 package com.ixtom.uds.controller;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,11 +14,9 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ixtom.uds.dto.NewDuelRequest;
 import com.ixtom.uds.model.Duel;
 import com.ixtom.uds.repository.DuelRepository;
+import com.ixtom.uds.utils.SocialLink;
 
 import jakarta.validation.Valid;
-
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 
 @Controller
 public class DuelController {
@@ -45,10 +42,10 @@ public class DuelController {
 
     @PostMapping("/upload")
     public String upload(@Valid @ModelAttribute("newduel") NewDuelRequest duelReq, BindingResult bindingResult, Model model) {
-        String videoid1 = getYouTubeId(duelReq.url1());
-        String videoid2 = getYouTubeId(duelReq.url2());
+        String videoid1 = SocialLink.YOUTUBE_VIDEO.extractId(duelReq.url1());
+        String videoid2 = SocialLink.YOUTUBE_VIDEO.extractId(duelReq.url2());
 
-        if (videoid1 == null) {
+        if (videoid1 == null) { // should not happen
             bindingResult.rejectValue("url1", "invalid", "Could not extract YouTube ID");
         }
 
@@ -70,21 +67,5 @@ public class DuelController {
 
         Duel savedDuel = duelRepo.save(newDuel);
         return "redirect:/duelpage/" + savedDuel.getId();
-    }
-
-    public static String getYouTubeId (String youTubeUrl) {
-        if (youTubeUrl == null || youTubeUrl.isBlank()) {
-            return null;
-        }
-
-        String pattern = "(?:youtu\\.be/|embed/|videos/|shorts/|(?:watch\\?|.*[&?])v=)([^#&?\\s]{11})";
-        Pattern compiledPattern = Pattern.compile(pattern);
-        Matcher matcher = compiledPattern.matcher(youTubeUrl);
-
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-
-        return null;
     }
 }
