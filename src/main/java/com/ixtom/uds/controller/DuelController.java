@@ -31,7 +31,7 @@ public class DuelController {
     public String getUpload(Model model) {
         model.addAttribute("newduel", new NewDuelRequest(null, null, null, null, null));
 
-        return "upload";
+        return "duel/upload";
     }
 
     @GetMapping("/duelpage/{id}")
@@ -40,7 +40,7 @@ public class DuelController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         model.addAttribute("duel", duel);
 
-        return "duelpage";
+        return "duel/view";
     }
 
     @PostMapping("/upload")
@@ -57,7 +57,7 @@ public class DuelController {
         }
 
         if (bindingResult.hasErrors()) {
-            return "upload";
+            return "duel/upload";
         }
 
         Duel newDuel = new Duel();
