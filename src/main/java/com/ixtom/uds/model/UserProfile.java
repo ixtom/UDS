@@ -93,4 +93,8 @@ public class UserProfile {
     public void setUserAuth(UserAuth userAuth) {
         this.userAuth = userAuth;
     }
+
+	public List<Duelist> getDuelists() {
+		return duelists;
+	}
 }

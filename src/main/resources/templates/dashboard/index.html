@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+    <!--<header th:replace="~{fragments/generic :: header}"></header>-->
+    <div th:replace="~{fragments/dashboard-layout :: layout(~{dashboard/sidebar :: sidebar}, ~{::content})}">
+        <section th:fragment="content">
+            <h1>Overview</h1>
+            <a th:href="@{/profile/{username}(username=${currentUser.profile.username})}">View profile</a>
+            <!--Current competitions / status-->
+            <!--Current Duels / status-->
+        </section>
+    </div>
+    <!--<footer th:replace="~{fragments/generic :: footer}"></footer>-->
+</body>
+</html>
