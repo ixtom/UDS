@@ -65,8 +65,8 @@ public class CompetitionController {
 
     @GetMapping("/competitions/{id}")
     public String viewCompetition(@PathVariable Long id, Model model) {
-        Competition competition = competitionRepo.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        
+        Competition competition = getCompetitionOrThrow(id);
         model.addAttribute("competition", competition);
 
         return "competition/detail";
@@ -74,10 +74,15 @@ public class CompetitionController {
 
     @GetMapping("/admin/competitions/{id}")
     public String getCompetitionInfo(@PathVariable Long id, Model model) { 
-        Competition competition = competitionRepo.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Competition competition = getCompetitionOrThrow(id);
         model.addAttribute("competition", competition);
 
         return "competition/manage";
     }
+
+    private Competition getCompetitionOrThrow(Long id) {
+    return competitionRepo.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+}
 }
