@@ -15,11 +15,9 @@ import com.ixtom.uds.repository.CompetitionRepository;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -33,21 +31,22 @@ public class CompetitionController {
     
     @GetMapping("/admin/competitions/new")
     public String getCreateCompetition(Model model) {
-        model.addAttribute("newcompetition", new CreateCompetitionRequest(null, null, 30));
+        model.addAttribute("createCompetitionRequest", new CreateCompetitionRequest(null, null, 30));
         
         return "competition/form";
     }
     
-    @PostMapping("/admin/competitions")
+    @PostMapping("/admin/competitions/new")
     public String createCompetition(
-            @Valid @ModelAttribute("newcompetition") CreateCompetitionRequest req, 
+            @Valid CreateCompetitionRequest req, 
             BindingResult bindingResult) {
 
         Instant start = req.start();
 
         if (start != null && !start.isAfter(Instant.now())) {
             bindingResult.rejectValue("start", "invalid", "Start must be in the future.");
-        } if (bindingResult.hasErrors()) {
+        }
+        if (bindingResult.hasErrors()) {
         return "competition/form";
         }
 
@@ -65,7 +64,7 @@ public class CompetitionController {
 
     @GetMapping("/competitions/{id}")
     public String viewCompetition(@PathVariable Long id, Model model) {
-        
+
         Competition competition = getCompetitionOrThrow(id);
         model.addAttribute("competition", competition);
 
@@ -84,5 +83,5 @@ public class CompetitionController {
     private Competition getCompetitionOrThrow(Long id) {
     return competitionRepo.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-}
+    }
 }

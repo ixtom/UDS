@@ -11,7 +11,7 @@
 
     <div th:each="c : ${competitions}">
         <a th:href="@{/competitions/{id}(id=${c.id})}" th:text="${c.title}"></a>
-        <time class="convert-to-local-date" th:datetime="${c.start}"></time>
+        <time class="convert-to-local-date-and-time" th:datetime="${c.start}"></time>
         <a th:if="${currentUser != null and currentUser.hasRole('ADMIN')}"
            th:href="@{/admin/competitions/{id}(id=${c.id})}">Manage</a>
     </div>

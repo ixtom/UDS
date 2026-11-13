@@ -7,23 +7,23 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
-    <form id="form" th:action="@{/admin/competitions}" th:object="${newcompetition}" method="post" class="container mt-4">
+    <form id="form" th:action="@{/admin/competitions/new}" th:object="${createCompetitionRequest}" method="post" class="container mt-4">
         <div class="form-group">
             <label for="title">Title</label>
-            <input type="text" class="form-control" maxlength="255" th:field="*{title}">
+            <input type="text" class="form-control" maxlength="255" required th:field="*{title}">
             <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
         </div>
 
         <div class="form-group">
             <label for="localTimestamp">Start (also the sign-up deadline)</label>
-            <input type="datetime-local" id="localTimestamp" class="form-control">
+            <input type="datetime-local" id="localTimestamp" class="form-control" required>
             <input type="hidden" th:field="*{start}">
             <div class="text-danger" th:if="${#fields.hasErrors('start')}" th:errors="*{start}"></div>
         </div>
 
         <div class="form-group">
             <label for="roundDurationDays">Round length (days)</label>
-            <input type="number" class="form-control" min="1" max="365" th:field="*{roundDurationDays}">
+            <input type="number" class="form-control" min="1" max="365" required th:field="*{roundDurationDays}">
             <div class="text-danger" th:if="${#fields.hasErrors('roundDurationDays')}" th:errors="*{roundDurationDays}"></div>
         </div>
 

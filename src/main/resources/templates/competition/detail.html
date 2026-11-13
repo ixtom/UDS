@@ -10,9 +10,16 @@
     <a th:href="@{/competitions}">&larr; All competitions</a>
 
     <h2 class="mt-3" th:text="${competition.title}"></h2>
-    <p>Starts: <time class="convert-to-local-date" th:datetime="${competition.start}"></time></p>
+    <p>Starts: <time class="convert-to-local-date-and-time" th:datetime="${competition.start}"></time></p>
     <p>Round length: <span th:text="${competition.roundDurationDays}"></span> days</p>
+    <p>Estimated rounds: <span th:text="${competition.estimateRounds()}"></span></p>
     
+    <h4 class="mt-4">Participants (<span th:text="${#lists.size(competition.participants)}"></span>)</h4>
+    <p class="text-muted" th:if="${competition.participants.isEmpty()}">Nobody has joined yet.</p>
+    <ul>
+        <li th:each="p : ${competition.participants}" th:text="${p.duelist.name} + ' (' + ${p.duelist.owner.username} + ')'"></li>
+    </ul>
+
     <script th:src="@{/js/localdate.js}"></script>
 </body>
 </html>

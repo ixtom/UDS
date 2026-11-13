@@ -2,17 +2,12 @@ package com.ixtom.uds.model;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -32,16 +27,10 @@ public class Competition {
 
 	private int roundDurationDays = 30;
 	
-	@ManyToMany
-	@JoinTable(
-		name = "competition_roster",
-		joinColumns = @JoinColumn(name = "competition_id"),
-		inverseJoinColumns = @JoinColumn(name = "user_profile_id")
-	)
-	private Set<UserProfile> roster = new HashSet<>();
-
     @OneToMany(mappedBy = "competition")
-    private List<CompetitionEntry> entries = new ArrayList<>();
+    private List<CompetitionEntry> participants = new ArrayList<>();
+
+	private static final int MAX_LOSSES = 1; // single elimination for now; raise to 2-3 for the loss-based format
 
     public Competition() {}
 
@@ -83,16 +72,16 @@ public class Competition {
 		this.roundDurationDays = roundDurationDays;
 	}
 
-	public Set<UserProfile> getRoster() {
-		return roster;
+	public List<CompetitionEntry> getParticipants() {
+		return participants;
 	}
 
-	public void setRoster(Set<UserProfile> roster) {
-		this.roster = roster;
-	}
-
-	public List<CompetitionEntry> getEntries() {
-		return entries;
+	public int estimateRounds() {
+		int n = participants.size();
+		if (n < 2) {
+			return 0;
+		}
+		return MAX_LOSSES * (int) Math.ceil(Math.log(n) / Math.log(2));
 	}
 
 	
