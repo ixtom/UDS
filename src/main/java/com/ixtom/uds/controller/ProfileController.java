@@ -39,7 +39,7 @@ public class ProfileController {
         model.addAttribute("isOwner", currentUser != null && profile.getId().equals(currentUser.getId()));
         model.addAttribute("duelists", duelistRepository.findByOwnerIdOrderByNameAsc(profile.getId()));
 
-        return "profile";
+        return "profile/view";
     }
 
     @GetMapping("/account/profile/edit")
@@ -47,7 +47,7 @@ public class ProfileController {
         UserProfile profile = ownProfile(currentUser);
         model.addAttribute("editProfile", new EditProfileRequest(
                 profile.getBio(), profile.getYoutubeUrl(), profile.getInstagramUrl()));
-        return "edit-profile";
+        return "profile/edit";
     }
 
     @PostMapping("/account/profile/edit")
@@ -56,7 +56,7 @@ public class ProfileController {
         UserProfile profile = ownProfile(currentUser);
 
         if (errors.hasErrors()) {
-            return "edit-profile";
+            return "profile/edit";
         }
         profile.setBio(request.bio());
         profile.setYoutubeUrl(request.youtubeUrl());
