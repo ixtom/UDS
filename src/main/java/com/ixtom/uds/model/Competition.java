@@ -13,26 +13,27 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
-@Table (name = "Competition")
+@Table(name = "Competition")
 public class Competition {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-	@NotBlank 
+	@NotBlank
 	private String title;
 
-    private Instant start;
+	private Instant start;
 
 	private int roundDurationDays = 30;
-	
-    @OneToMany(mappedBy = "competition")
-    private List<CompetitionEntry> participants = new ArrayList<>();
+
+	@OneToMany(mappedBy = "competition")
+	private List<CompetitionEntry> participants = new ArrayList<>();
 
 	private static final int MAX_LOSSES = 1; // single elimination for now; raise to 2-3 for the loss-based format
 
-    public Competition() {}
+	public Competition() {
+	}
 
 	public Competition(String title, Instant start, int roundDurationDays) {
 		this.title = title;
@@ -84,5 +85,4 @@ public class Competition {
 		return MAX_LOSSES * (int) Math.ceil(Math.log(n) / Math.log(2));
 	}
 
-	
 }

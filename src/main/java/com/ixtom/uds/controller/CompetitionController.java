@@ -19,26 +19,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
 
-
-
-
-
-@Controller 
+@Controller
 public class CompetitionController {
-    
-    @Autowired 
+
+    @Autowired
     private CompetitionRepository competitionRepo;
-    
+
     @GetMapping("/admin/competitions/new")
     public String getCreateCompetition(Model model) {
         model.addAttribute("createCompetitionRequest", new CreateCompetitionRequest(null, null, 30));
-        
+
         return "competition/form";
     }
-    
+
     @PostMapping("/admin/competitions/new")
     public String createCompetition(
-            @Valid CreateCompetitionRequest req, 
+            @Valid CreateCompetitionRequest req,
             BindingResult bindingResult) {
 
         Instant start = req.start();
@@ -47,14 +43,14 @@ public class CompetitionController {
             bindingResult.rejectValue("start", "invalid", "Start must be in the future.");
         }
         if (bindingResult.hasErrors()) {
-        return "competition/form";
+            return "competition/form";
         }
 
         Competition saved = competitionRepo.save(new Competition(req.title(), start, req.roundDurationDays()));
 
         return "redirect:/admin/competitions/" + saved.getId();
     }
-    
+
     @GetMapping("/competitions")
     public String listCompetitions(Model model) {
         model.addAttribute("competitions", competitionRepo.findAll());
@@ -72,7 +68,7 @@ public class CompetitionController {
     }
 
     @GetMapping("/admin/competitions/{id}")
-    public String getCompetitionInfo(@PathVariable Long id, Model model) { 
+    public String getCompetitionInfo(@PathVariable Long id, Model model) {
 
         Competition competition = getCompetitionOrThrow(id);
         model.addAttribute("competition", competition);
@@ -81,7 +77,7 @@ public class CompetitionController {
     }
 
     private Competition getCompetitionOrThrow(Long id) {
-    return competitionRepo.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return competitionRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }
