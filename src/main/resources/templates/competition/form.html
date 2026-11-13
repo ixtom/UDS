@@ -21,6 +21,12 @@
             <div class="text-danger" th:if="${#fields.hasErrors('start')}" th:errors="*{start}"></div>
         </div>
 
+        <div class="form-group">
+            <label for="roundDurationDays">Round length (days)</label>
+            <input type="number" class="form-control" min="1" max="365" th:field="*{roundDurationDays}">
+            <div class="text-danger" th:if="${#fields.hasErrors('roundDurationDays')}" th:errors="*{roundDurationDays}"></div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Create competition</button>
     </form>
 

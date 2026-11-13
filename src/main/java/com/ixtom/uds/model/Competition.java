@@ -30,6 +30,8 @@ public class Competition {
 
     private Instant start;
 
+	private int roundDurationDays = 30;
+	
 	@ManyToMany
 	@JoinTable(
 		name = "competition_roster",
@@ -43,9 +45,10 @@ public class Competition {
 
     public Competition() {}
 
-	public Competition(String title, Instant start) {
+	public Competition(String title, Instant start, int roundDurationDays) {
 		this.title = title;
 		this.start = start;
+		this.roundDurationDays = roundDurationDays;
 	}
 
 	public Long getId() {
@@ -70,6 +73,14 @@ public class Competition {
 
 	public void setStart(Instant start) {
 		this.start = start;
+	}
+
+	public int getRoundDurationDays() {
+		return roundDurationDays;
+	}
+
+	public void setRoundDurationDays(int roundDurationDays) {
+		this.roundDurationDays = roundDurationDays;
 	}
 
 	public Set<UserProfile> getRoster() {

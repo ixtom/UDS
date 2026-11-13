@@ -33,8 +33,8 @@ public class CompetitionController {
     
     @GetMapping("/admin/competitions/new")
     public String getCreateCompetition(Model model) {
-        model.addAttribute("newcompetition", new CreateCompetitionRequest(null, null));
-
+        model.addAttribute("newcompetition", new CreateCompetitionRequest(null, null, 30));
+        
         return "competition/form";
     }
     
@@ -51,7 +51,7 @@ public class CompetitionController {
         return "competition/form";
         }
 
-        Competition saved = competitionRepo.save(new Competition(req.title(), start));
+        Competition saved = competitionRepo.save(new Competition(req.title(), start, req.roundDurationDays()));
 
         return "redirect:/admin/competitions/" + saved.getId();
     }
