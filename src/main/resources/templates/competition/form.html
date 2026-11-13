@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Competition</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+    <form id="form" th:action="@{/admin/competitions}" th:object="${newcompetition}" method="post" class="container mt-4">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" maxlength="255" th:field="*{title}">
+            <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="localTimestamp">Start (also the sign-up deadline)</label>
+            <input type="datetime-local" id="localTimestamp" class="form-control">
+            <input type="hidden" th:field="*{start}">
+            <div class="text-danger" th:if="${#fields.hasErrors('start')}" th:errors="*{start}"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create competition</button>
+    </form>
+
+    <script>
+        const form = document.getElementById("form");
+        const startInput = document.getElementById("start");
+        const local = document.getElementById("localTimestamp");
+
+        // after a validation error, refill the visible box from the hidden value
+        if (startInput.value) {
+            const d = new Date(startInput.value);
+            const pad = function (n) { return String(n).padStart(2, "0"); };
+            local.value = d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate())
+                + "T" + pad(d.getHours()) + ":" + pad(d.getMinutes());
+        }
+
+        // convert to UTC right before sending
+        form.addEventListener("submit", function () {
+            startInput.value = local.value ? new Date(local.value).toISOString() : "";
+        });
+    </script>
+</body>
+</html>

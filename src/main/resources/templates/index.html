@@ -12,7 +12,6 @@
         <form th:action="@{/logout}" method="post">
             <input type="submit" value="logout" />
         </form>
-        <a th:if="${currentUser.hasRole('ADMIN')}" href="/admin/competitions">View Competitions</a><br>
         <a th:if="${currentUser.hasRole('ADMIN')}" href="/admin/users">View registered users</a><br>
         <a th:href="@{/account/profile/edit}">Edit Profile</a>
         <a href="/change-password">Change password</a>
@@ -20,6 +19,7 @@
         <a href="/upload">Upload new duel</a>
     </div>
     <a th:if="${currentUser == null}" href="/login">Login</a>
+    <a th:href="@{/competitions}">View Competitions</a>
 
     <div>
         <div th:each="duel: ${duels}">
