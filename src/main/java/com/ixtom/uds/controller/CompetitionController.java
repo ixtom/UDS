@@ -7,17 +7,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ixtom.uds.dto.CreateCompetitionRequest;
 import com.ixtom.uds.model.Competition;
 import com.ixtom.uds.repository.CompetitionRepository;
 
 import jakarta.validation.Valid;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 public class CompetitionController {
@@ -27,7 +26,7 @@ public class CompetitionController {
 
     @GetMapping("/admin/competitions/new")
     public String getCreateCompetition(Model model) {
-        model.addAttribute("createCompetitionRequest", new CreateCompetitionRequest(null, null, 30));
+        model.addAttribute("createCompetitionRequest", new CreateCompetitionRequest(null, null, 5));
 
         return "competition/form";
     }
@@ -46,7 +45,7 @@ public class CompetitionController {
             return "competition/form";
         }
 
-        Competition saved = competitionRepo.save(new Competition(req.title(), start, req.roundDurationDays()));
+        Competition saved = competitionRepo.save(new Competition(req.title(), start, req.rounds()));
 
         return "redirect:/admin/competitions/" + saved.getId();
     }
