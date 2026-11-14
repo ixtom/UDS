@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.ixtom.uds.dto.UserDuelQuery;
+import com.ixtom.uds.dto.UserDuelView;
 import com.ixtom.uds.model.Duel;
 import com.ixtom.uds.model.Duelist;
 
@@ -44,13 +44,10 @@ public interface DuelRepository extends JpaRepository<Duel, Long> {
     boolean existsMatchInCompetition(Long competitionId, Long duelist1, Long duelist2);
 
     @Query("""
-        SELECT new com.ixtom.uds.dto.UserDuelQuery(d, d.duelist1, d.duelist2)
+        SELECT new com.ixtom.uds.dto.UserDuelView(d, d.duelist1.owner.id = :userId)
         FROM Duel d
         WHERE d.duelist1.owner.id = :userId
-        UNION ALL
-        SELECT new com.ixtom.uds.dto.UserDuelQuery(d, d.duelist2, d.duelist1)
-        FROM Duel d
-        WHERE d.duelist2.owner.id = :userId
+           OR d.duelist2.owner.id = :userId
     """)
-    List<UserDuelQuery> findUserDuelsId(Long userId);
+    List<UserDuelView> findForUser(Long userId);
 }

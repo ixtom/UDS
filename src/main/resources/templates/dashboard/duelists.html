@@ -20,6 +20,10 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <!--TODO: change to just `duelists`-->
+                    <tr th:if="${#lists.isEmpty(currentUser.profile.duelists)}">
+                        <td colspan="4">You don't have any duelists yet</td>
+                    </tr>
                     <tr th:each="duelist: ${currentUser.profile.duelists}">
                         <td><a th:href="@{/duelist/{id}(id=${duelist.id})}" th:text="${duelist.name}"></a></td>
                         <td><th:block th:if="${!#strings.isEmpty(duelist.title)}" th:text="|&OpenCurlyDoubleQuote;${duelist.title}&CloseCurlyDoubleQuote;|"></th:block></td>
