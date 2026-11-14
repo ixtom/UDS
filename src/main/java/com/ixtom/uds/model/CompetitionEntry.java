@@ -33,6 +33,11 @@ public class CompetitionEntry {
     private int round = 1;
     private boolean eliminated = false;
 
+    public CompetitionEntry(Competition competition, Duelist duelist) {
+        this.competition = competition;
+        this.duelist = duelist;
+    }
+
     public CompetitionEntry() {}
 
 	public CompetitionEntryId getId() {

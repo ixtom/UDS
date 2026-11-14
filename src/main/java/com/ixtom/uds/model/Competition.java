@@ -77,4 +77,8 @@ public class Competition {
         // each round, exactly half of the participants get eliminated except for the first one
         return 1 << (rounds - 1);
     }
+
+    public boolean started() {
+        return !start.isAfter(Instant.now());
+    }
 }

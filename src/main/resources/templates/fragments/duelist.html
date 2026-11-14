@@ -1,0 +1,32 @@
+<div th:fragment="card(duelist)" class="duelist-card">
+    <div class="duelist-card-info">
+        <div class="duelist-card-name" th:text="${duelist.name}"></div>
+        <div
+            th:if="${!#strings.isEmpty(duelist.title)}"
+            th:text="|&OpenCurlyDoubleQuote;${duelist.title}&CloseCurlyDoubleQuote;|"
+            class="duelist-card-title"
+        ></div>
+    </div>
+    <img
+        class="duelist-card-image"
+        th:src="${#strings.isEmpty(duelist.photo) ? '/images/missing-image.svg' : duelist.photo}"
+        alt="Duelist photo"
+    />
+</div>
+
+<fieldset th:fragment="picker(duelists)" class="duelist-picker">
+    <legend>Choose your duelist</legend>
+    <label th:each="duelist : ${duelists}" class="duelist-option">
+        <input
+            type="radio"
+            th:field="*{duelistId}"
+            th:value="${duelist.id}"
+            required
+        />
+        <div th:replace="~{fragments/duelist :: card(${duelist})}"></div>
+    </label>
+    <div
+        th:if="${#fields.hasErrors('duelistId')}"
+        th:errors="*{duelistId}"
+    ></div>
+</fieldset>
