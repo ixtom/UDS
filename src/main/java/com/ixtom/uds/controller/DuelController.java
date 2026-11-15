@@ -31,14 +31,14 @@ public class DuelController {
     public String getUpload(Model model) {
         model.addAttribute("newduel", new NewDuelRequest(null, null, null, null, null));
 
-        return "upload";
+        return "duel/upload";
     }
 
     @GetMapping("/duelpage/{id}")
     public String duelPage(@PathVariable Long id, Model model) {
         model.addAttribute("duel", getDuel(id));
 
-        return "duelpage";
+        return "duel/view";
     }
 
     @PostMapping("/upload")
@@ -55,7 +55,7 @@ public class DuelController {
         }
 
         if (bindingResult.hasErrors()) {
-            return "upload";
+            return "duel/upload";
         }
 
         Duel newDuel = new Duel();

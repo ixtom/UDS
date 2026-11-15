@@ -19,6 +19,7 @@
         <a href="/upload">Upload new duel</a>
     </div>
     <a th:if="${currentUser == null}" href="/login">Login</a>
+    <a th:href="@{/competitions}">View Competitions</a>
 
     <div>
         <div th:each="duel: ${duels}">

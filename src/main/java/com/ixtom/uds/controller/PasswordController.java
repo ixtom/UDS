@@ -34,7 +34,7 @@ public class PasswordController {
     @GetMapping("/change-password")
     public String getChangePassword(Model model) {
         model.addAttribute("changePasswordRequest", new ChangePasswordRequest(null, null, null));
-        return "change-password";
+        return "auth/change-password";
     }
 
     @PostMapping("/change-password")
@@ -64,7 +64,7 @@ public class PasswordController {
         }
 
         if (bindingResult.hasErrors()) {
-            return "change-password";
+            return "auth/change-password";
         }
 
         user.setHashedPassword(passwordEncoder.encode(newPassword));
