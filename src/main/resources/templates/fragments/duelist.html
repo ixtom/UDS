@@ -16,6 +16,10 @@
 
 <fieldset th:fragment="picker(duelists)" class="duelist-picker">
     <legend>Choose your duelist</legend>
+    <div th:if="${#lists.isEmpty(duelists)}">
+        <p>You dont have any duelists!</p>
+        <a href="/duelist/create">Create new duelist</a>
+    </div>
     <label th:each="duelist : ${duelists}" class="duelist-option">
         <input
             type="radio"
