@@ -25,9 +25,10 @@ public class Duelist {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,7 +38,8 @@ public class Duelist {
     // change to image in later iteration
     private String photo;
 
-    @Pattern(regexp = "^[a-zA-Z0-9_-]{11}$")
+    @Column(length = 11, nullable = false)
+    @Pattern(regexp = "^$|^[a-zA-Z0-9_-]{11}$")
     private String demo;
 
     @OneToMany(mappedBy = "duelist")

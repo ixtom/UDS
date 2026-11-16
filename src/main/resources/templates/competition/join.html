@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link rel="stylesheet" href="/css/duelist-fragments.css">
+</head>
+<body>
+    <form id="form" th:action="@{''}" th:object="${joinCompetitionRequest}" method="post">
+
+        <!--fills out duelistId, reqired-->
+        <div style="display:flex; height: 20rem;">
+            <label for=""></label>
+            <div th:replace="~{fragments/duelist :: picker(${duelists})}"></div>
+        </div>
+
+        <button type="submit">Enter!</button>
+    </form>
+</body>
+</html>
