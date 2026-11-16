@@ -30,6 +30,14 @@
         <li th:each="p : ${competition.participants}" th:text="${p.duelist.name} + ' (' + ${p.duelist.owner.username} + ')'"></li>
     </ul>
 
+    <h4 class="mt-4">Matchups (<span th:text="${#lists.size(duels)}"></span>)</h4>
+    <p class="text-muted" th:if="${duels.isEmpty()}">No matchups yet.</p>
+    <ul>
+        <li th:each="d : ${duels}">
+            <a th:href="@{/duelpage/{id}(id=${d.id})}" th:text="${d.defaultTitle}"></a>
+        </li>
+    </ul>
+
     <script th:src="@{/js/localdate.js}"></script>
 </body>
 </html>

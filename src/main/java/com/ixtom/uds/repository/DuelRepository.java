@@ -50,4 +50,13 @@ public interface DuelRepository extends JpaRepository<Duel, Long> {
            OR d.duelist2.owner.id = :userId
     """)
     List<UserDuelView> findForUser(Long userId);
+
+    @Query("""
+        SELECT COALESCE(MAX(d.roundnum), 0) 
+        FROM Duel d
+        WHERE d.competition.id = :competitionId         
+    """)
+    int findLatestRound(Long competitionId);
+
+    List<Duel> findByCompetitionIdOrderByRoundnum(Long competitionId);
 }
