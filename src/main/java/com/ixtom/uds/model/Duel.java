@@ -47,11 +47,11 @@ public class Duel {
     @JoinColumn(name = "duelist2_id")
     private Duelist duelist2;
 
-    @Pattern(regexp = "^[a-zA-Z0-9_-]{11}$", message = "Invalid YouTube video ID")
+    @Pattern(regexp = "^$|^[a-zA-Z0-9_-]{11}$", message = "Invalid YouTube video ID")
     @Column(name = "videoid1", length = 11)
     private String videoid1;
 
-    @Pattern(regexp = "^[a-zA-Z0-9_-]{11}$", message = "Invalid YouTube video ID")
+    @Pattern(regexp = "^$|^[a-zA-Z0-9_-]{11}$", message = "Invalid YouTube video ID")
     @Column(name = "videoid2", length = 11)
     private String videoid2;
 

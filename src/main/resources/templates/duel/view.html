@@ -31,11 +31,11 @@
             </article>
         </section>
 
-        <section class="animations" th:if="${duel.videoid1 != null or duel.videoid2 != null}">
+        <section class="animations" th:if="${!#strings.isEmpty(duel.videoid1) or !#strings.isEmpty(duel.videoid2)}">
             <h2>Animations</h2>
-            <iframe th:if="${duel.videoid1 != null}" width="420" height="345"
+            <iframe th:if="${!#strings.isEmpty(duel.videoid1)}" width="420" height="345"
                     th:src="|https://www.youtube-nocookie.com/embed/${duel.videoid1}|"></iframe>
-            <iframe th:if="${duel.videoid2 != null}" width="420" height="345"
+            <iframe th:if="${!#strings.isEmpty(duel.videoid2)}" width="420" height="345"
                     th:src="|https://www.youtube-nocookie.com/embed/${duel.videoid2}|"></iframe>
         </section>
         <!-- Voting Section!!!
