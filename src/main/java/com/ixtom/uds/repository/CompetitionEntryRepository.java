@@ -10,4 +10,5 @@ import com.ixtom.uds.model.CompetitionEntry.CompetitionEntryId;
 public interface CompetitionEntryRepository extends JpaRepository<CompetitionEntry, CompetitionEntryId> {
     public List<CompetitionEntry> findByCompetitionId(Long competitionId);
     public List<CompetitionEntry> findByDuelistId(Long duelistId);
+    public List<CompetitionEntry> findByDuelistOwnerId(Long ownerId);
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+    <div th:replace="~{fragments/dashboard-layout :: layout(~{dashboard/sidebar :: sidebar}, ~{::content})}">
+        <section th:fragment="content">
+            <h1>Duels</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Duel</td>
+                        <td>Duelist</td>
+                        <td>Opponent</td>
+                        <td>Competition</td>
+                        <!--<td>Status</td>-->
+                        <td><!--edit--></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(matches)}">
+                        <td colspan="5">You haven't participated in any duels yet</td>
+                    </tr>
+                    <tr th:each="match: ${matches}">
+                        <td><a th:href="@{/duelpage/{id}(id=${match.duel.id})}" th:text="${match.duel.defaultTitle}"></td>
+                        <td><a th:href="@{/duelist/{id}(id=${match.duelist.id})}" th:text="${match.duelist.name}"></a></td>
+                        <td><a th:href="@{/duelist/{id}(id=${match.opponent.id})}" th:text="${match.opponent.name}"></a></td>
+                        <td>
+                            <a th:if="${match.duel.competition}" th:href="@{/competitions/{id}(id=${match.duel.competition.id})}" th:text="${match.duel.competition.title}"></a>
+                            <th:block th:unless="${match.duel.competition}">N/A</th:block>
+                        </td>
+                        <!--<td>In Progress, Voting, Win/Lose</td>-->
+                        <td><a th:href="@{/duel/{id}/edit(id=${match.duel.id})}"><img src="/images/pencil.svg" alt="edit"></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</body>
+</html>

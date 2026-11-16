@@ -21,7 +21,7 @@ public class SecurityConfig {
             auth
                 .requestMatchers("/admin/**")
                 .hasRole("ADMIN")
-                .requestMatchers("/change-password", "/upload", "/account/profile/edit").authenticated()
+                .requestMatchers("/change-password", "/upload", "/account/profile/edit", "/dashboard/**").authenticated()
                 .anyRequest()
                 .permitAll()
         )
