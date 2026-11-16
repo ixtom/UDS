@@ -113,5 +113,7 @@ public class Duelist {
         this.demo = demo;
     }
 
-    // List of Competitions to be done in later iteration
+	public List<CompetitionEntry> getCompetitionEntries() {
+		return competitionEntries;
+	}
 }

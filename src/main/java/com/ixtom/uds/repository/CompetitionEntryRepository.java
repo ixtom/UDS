@@ -14,6 +14,7 @@ public interface CompetitionEntryRepository extends JpaRepository<CompetitionEnt
 
     public boolean existsByCompetitionIdAndDuelistOwnerId(Long competitionId, Long ownerId);
     public long countByCompetitionId(Long competitionId);
+    public List<CompetitionEntry> findByDuelistOwnerId(Long ownerId);
 
     @Transactional
     public void deleteByCompetitionIdAndDuelistOwnerId(Long competitionId, Long userId);
