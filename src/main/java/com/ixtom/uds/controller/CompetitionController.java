@@ -1,6 +1,9 @@
 package com.ixtom.uds.controller;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,10 +21,12 @@ import com.ixtom.uds.dto.CreateCompetitionRequest;
 import com.ixtom.uds.dto.JoinCompetitionRequest;
 import com.ixtom.uds.model.Competition;
 import com.ixtom.uds.model.CompetitionEntry;
+import com.ixtom.uds.model.Duel;
 import com.ixtom.uds.model.Duelist;
 import com.ixtom.uds.model.UserAuthPrincipal;
 import com.ixtom.uds.repository.CompetitionEntryRepository;
 import com.ixtom.uds.repository.CompetitionRepository;
+import com.ixtom.uds.repository.DuelRepository;
 import com.ixtom.uds.repository.DuelistRepository;
 
 import jakarta.validation.Valid;
@@ -37,6 +42,9 @@ public class CompetitionController {
 
     @Autowired
     private CompetitionEntryRepository competitionEntryRepo;
+
+    @Autowired 
+    private DuelRepository duelRepo;
 
     @GetMapping("/admin/competitions/new")
     public String getCreateCompetition(Model model) {
@@ -83,6 +91,7 @@ public class CompetitionController {
         }
 
         model.addAttribute("competition", competition);
+        model.addAttribute("duels", duelRepo.findByCompetitionIdOrderByRoundnum(id));
 
         return "competition/detail";
     }
@@ -92,6 +101,7 @@ public class CompetitionController {
 
         Competition competition = getCompetitionOrThrow(id);
         model.addAttribute("competition", competition);
+        model.addAttribute("duels", duelRepo.findByCompetitionIdOrderByRoundnum(id));
 
         return "competition/manage";
     }
@@ -125,9 +135,9 @@ public class CompetitionController {
         if (req.duelistId() != null) {
             duelist = duelistRepo.findById(req.duelistId()).orElse(null);
             if (duelist == null) {
-                bindingResult.rejectValue("duelistID", "invalid", "Duelist does not exist");
+                bindingResult.rejectValue("duelistId", "invalid", "Duelist does not exist");
             } else if (!duelist.getOwner().getId().equals(principal.getId())) {
-                bindingResult.rejectValue("duelistID", "invalid", "You dont own this duelist");
+                bindingResult.rejectValue("duelistId", "invalid", "You dont own this duelist");
             }
         }
 
@@ -146,7 +156,7 @@ public class CompetitionController {
         Competition competition = getCompetitionOrThrow(id);
 
         if (principal == null) {
-            return "rediect:/login";
+            return "redirect:/login";
         }
 
         if (!canLeaveCompetition(competition, principal.getId())) {
@@ -174,4 +184,51 @@ public class CompetitionController {
         return !competition.started()
             && competitionEntryRepo.existsByCompetitionIdAndDuelistOwnerId(competition.getId(), userId);
     }
+
+    @PostMapping("/admin/competitions/{id}/pair")
+    public String pairOpponents(@PathVariable Long id) {
+        Competition competition = getCompetitionOrThrow(id);
+        int round = duelRepo.findLatestRound(id) + 1;
+        if (!competition.started() || round > competition.getRounds()) {
+            return "redirect:/admin/competitions/" + id;
+        }
+
+        List<Duelist> pool = new ArrayList<>();
+        for (CompetitionEntry entry : competition.getParticipants()) {
+            if (!entry.isEliminated()) {
+                pool.add(entry.getDuelist());
+            }
+        }
+        Collections.shuffle(pool);
+
+        while (pool.size() >= 2) {
+            Duelist a = pool.remove(0);
+
+            Duelist opponent = null;
+            for (Duelist b : pool) {
+                if (!duelRepo.existsMatchInCompetition(id, a.getId(), b.getId())) {
+                    opponent = b;
+                    break;
+                }
+            }
+            if (opponent == null) {
+                opponent = pool.get(0);
+            }
+            pool.remove(opponent);
+
+            Duel duel = new Duel();
+            duel.setCompetition(competition);
+            duel.setRoundnum(round);
+            duel.setDuelist1(a);
+            duel.setDuelist2(opponent);
+            duel.setUser1(a.getOwner());
+            duel.setUser2(opponent.getOwner());
+            duel.setVideoid1("");
+            duel.setVideoid2("");
+            duelRepo.save(duel);
+        }
+
+        return "redirect:/admin/competitions/" + id;
+    }
+    
 }

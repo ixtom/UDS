@@ -22,6 +22,17 @@
         <li th:each="p : ${competition.participants}" th:text="${p.duelist.name} + ' (' + ${p.duelist.owner.username} + ')'"></li>
     </ul>
 
+    <h4 class="mt-4">Matchups (<span th:text="${#lists.size(duels)}"></span>)</h4>
+    <form th:action="@{/admin/competitions/{id}/pair(id=${competition.id})}" method="post">
+        <button type="submit" class="btn btn-primary mb-2">Assign opponents</button>
+    </form>
+    <p class="text-muted" th:if="${duels.isEmpty()}">No matchups yet.</p>
+    <ul>
+        <li th:each="d : ${duels}">
+            <a th:href="@{/duelpage/{id}(id=${d.id})}" th:text="${d.defaultTitle}"></a>
+        </li>
+    </ul>
+
     <script th:src="@{/js/localdate.js}"></script>
     </div>
 </body>
