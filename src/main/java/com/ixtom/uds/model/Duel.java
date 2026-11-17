@@ -62,6 +62,9 @@ public class Duel {
         // these are not used but better to be safe
         this.user1 = duelist1.getOwner();
         this.user2 = duelist2.getOwner();
+
+        this.videoid1 = "";
+        this.videoid2 = "";
     }
 
     public Duel() {}

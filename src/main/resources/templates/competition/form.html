@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <form id="form" th:action="@{/admin/competitions/new}" th:object="${createCompetitionRequest}" method="post" class="container mt-4">
         <div class="form-group">
             <label for="title">Title</label>
