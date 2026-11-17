@@ -122,7 +122,7 @@ public class DuelistController {
     }
 
     @PostMapping("/{id:[0-9]+}/challenge")
-    public String challengeDuelist(@PathVariable Long id, @AuthenticationPrincipal UserAuthPrincipal principal, @ModelAttribute ChallengeDuelistRequest req, BindingResult bindingResult, Model model) {
+    public String challengeDuelist(@PathVariable Long id, @AuthenticationPrincipal UserAuthPrincipal principal, @Valid @ModelAttribute ChallengeDuelistRequest req, BindingResult bindingResult, Model model) {
         Duelist duelist = getDuelist(id);
 
         if (principal == null) {
@@ -135,9 +135,9 @@ public class DuelistController {
         if (req.duelistId() != null) {
             selectedDuelist = duelistRepo.findById(req.duelistId()).orElse(null);
             if (selectedDuelist == null) {
-                bindingResult.rejectValue("duelistID", "invalid", "Duelist does not exist");
+                bindingResult.rejectValue("duelistId", "invalid", "Duelist does not exist");
             } else if (!selectedDuelist.getOwner().getId().equals(principal.getId())) {
-                bindingResult.rejectValue("duelistID", "invalid", "You dont own this duelist");
+                bindingResult.rejectValue("duelistId", "invalid", "You dont own this duelist");
             }
         }
 

@@ -21,7 +21,7 @@
             </div>
 
             <p>Created by <a th:href="@{/profile/{username}(username=${duelist.owner.username})}" th:text="${duelist.owner.username}"></a></p>
-            <a th:if="${currentUser != null && owner == null}" th:href="@{/duelist/{id}/challenge(id=${duelist.id})}">Challenge!</a>
+            <a th:if="${currentUser != null && !isOwner}" th:href="@{/duelist/{id}/challenge(id=${duelist.id})}">Challenge!</a>
         </div>
 
         <div>
