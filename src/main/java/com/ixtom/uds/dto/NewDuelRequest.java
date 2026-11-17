@@ -21,7 +21,7 @@ public record NewDuelRequest(
     @Min(value = 1, message = "round number must be 1 or higher.")
     Integer round,
 
-    @Size(max = 5000, message = "Description. must be 5000 characters or less.")
+    @Size(max = 2000, message = "Description. must be 2000 characters or less.")
     String description,
 
     String duelBanner

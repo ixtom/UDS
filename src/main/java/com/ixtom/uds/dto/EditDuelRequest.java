@@ -18,6 +18,6 @@ public record EditDuelRequest(
     @Size(max = 256)
     String title,
 
-    @Size(max = 5000, message = "Description. must be 5000 characters or less.")
+    @Size(max = 2000, message = "Description. must be 2000 characters or less.")
     String description
 ) {}
