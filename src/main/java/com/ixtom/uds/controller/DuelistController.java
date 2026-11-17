@@ -118,7 +118,7 @@ public class DuelistController {
         model.addAttribute("duelists", duelistRepo.findByOwnerIdOrderByNameAsc(principal.getId()));
         model.addAttribute("challengeDuelistRequest", new ChallengeDuelistRequest(null));
 
-        return "/duelist/challenge";
+        return "duelist/challenge";
     }
 
     @PostMapping("/{id:[0-9]+}/challenge")
