@@ -41,34 +41,34 @@ public class DuelController {
         return "duel/view";
     }
 
-    @PostMapping("/upload")
-    public String upload(@Valid @ModelAttribute("newduel") NewDuelRequest duelReq, BindingResult bindingResult, Model model) {
-        String videoid1 = SocialLink.YOUTUBE_VIDEO.extractId(duelReq.url1());
-        String videoid2 = SocialLink.YOUTUBE_VIDEO.extractId(duelReq.url2());
+    // @PostMapping("/upload")
+    // public String upload(@Valid @ModelAttribute("newduel") NewDuelRequest duelReq, BindingResult bindingResult, Model model) {
+    //     String videoid1 = SocialLink.YOUTUBE_VIDEO.extractId(duelReq.url1());
+    //     String videoid2 = SocialLink.YOUTUBE_VIDEO.extractId(duelReq.url2());
 
-        if (videoid1 == null) { // should not happen
-            bindingResult.rejectValue("url1", "invalid", "Could not extract YouTube ID");
-        }
+    //     if (videoid1 == null) { // should not happen
+    //         bindingResult.rejectValue("url1", "invalid", "Could not extract YouTube ID");
+    //     }
 
-        if (videoid2 == null) {
-            bindingResult.rejectValue("url2", "invalid", "Could not extract YouTube ID");
-        }
+    //     if (videoid2 == null) {
+    //         bindingResult.rejectValue("url2", "invalid", "Could not extract YouTube ID");
+    //     }
 
-        if (bindingResult.hasErrors()) {
-            return "duel/upload";
-        }
+    //     if (bindingResult.hasErrors()) {
+    //         return "duel/upload";
+    //     }
 
-        Duel newDuel = new Duel();
+    //     Duel newDuel = new Duel();
 
-        newDuel.setVideoid1(videoid1);
-        newDuel.setVideoid2(videoid2);
-        newDuel.setRoundnum(duelReq.round());
-        newDuel.setDescription(duelReq.description());
-        newDuel.setDuelBanner(duelReq.duelBanner());
+    //     newDuel.setVideoid1(videoid1);
+    //     newDuel.setVideoid2(videoid2);
+    //     newDuel.setRoundnum(duelReq.round());
+    //     newDuel.setDescription(duelReq.description());
+    //     newDuel.setDuelBanner(duelReq.duelBanner());
 
-        Duel savedDuel = duelRepo.save(newDuel);
-        return "redirect:/duelpage/" + savedDuel.getId();
-    }
+    //     Duel savedDuel = duelRepo.save(newDuel);
+    //     return "redirect:/duelpage/" + savedDuel.getId();
+    // }
 
     @GetMapping("/duel/{id}/edit")
     public String getEditDuel(@PathVariable Long id, @AuthenticationPrincipal UserAuthPrincipal principal, Model model) {
