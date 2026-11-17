@@ -1,0 +1,19 @@
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-4">
+    <div class="container">
+        <a class="navbar-brand font-weight-normal text-dark" href="/">Home</a>
+        <div>
+            <a th:href="@{/competitions}">View Competitions</a>
+            <a th:if="${currentUser == null}" href="/login">Login</a>
+        </div>
+        <div th:if="${currentUser != null}">
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" value="logout" />
+            </form>
+            <a th:if="${currentUser.hasRole('ADMIN')}" href="/admin/users">View registered users</a><br>
+            <a href="/dashboard">Dashboard</a>
+            <a th:href="@{/account/profile/edit}">Edit Profile</a>
+            <a href="/change-password">Change password</a>
+            <a href="/link/discord" th:if="${!currentUser.isProviderLinked('discord')}">Link Discord</a>
+        </div>
+    </div>
+</nav>

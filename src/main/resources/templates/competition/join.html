@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="/css/duelist-fragments.css">
 </head>
 <body>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <form id="form" th:action="@{''}" th:object="${joinCompetitionRequest}" method="post">
 
         <!--fills out duelistId, reqired-->
