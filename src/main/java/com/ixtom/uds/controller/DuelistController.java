@@ -123,7 +123,7 @@ public class DuelistController {
     }
 
     @PostMapping("/{id:[0-9]+}/challenge")
-    public String challengeDuelist(@PathVariable Long id, @AuthenticationPrincipal UserAuthPrincipal principal, @RequestBody ChallengeDuelistRequest req, BindingResult bindingResult, Model model) {
+    public String challengeDuelist(@PathVariable Long id, @AuthenticationPrincipal UserAuthPrincipal principal, @ModelAttribute ChallengeDuelistRequest req, BindingResult bindingResult, Model model) {
         Duelist duelist = getDuelist(id);
 
         if (principal == null) {
