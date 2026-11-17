@@ -40,12 +40,32 @@
             <iframe th:if="${!#strings.isEmpty(duel.videoid2)}" width="420" height="345"
                     th:src="|https://www.youtube-nocookie.com/embed/${duel.videoid2}|"></iframe>
         </section>
-        <!-- Voting Section!!!
         <section class="voting">
-            <h2>Vote</h2>
-            <p>Voting coming soon.</p>
+            <p>Category 1</p>
+            <div th:if="${currentUser != null}">
+                <form th:action="@{/duelpage/{id}(id=${duel.id})}"
+                    th:object="${voteRequest}" method="post">
+                    <select th:field="*{cat1winner}">
+                        <option th:if="${duel.duelist1 != null}"
+                                th:value="${duel.duelist1?.id}"
+                                th:text="${duel.duelist1?.name}"></option>
+                        <option th:if="${duel.duelist2 != null}"
+                                th:value="${duel.duelist2?.id}"
+                                th:text="${duel.duelist2?.name}"></option>
+                    </select>
+                    <button type="submit">Vote</button>
+                </form>
+            </div>
+            <p th:unless="${currentUser != null}">
+                <a th:href="@{/login}">Log in to vote</a>
+            </p>
+            <p> <span th:text="${duel.duelist1?.name}"></span>
+                <span th:text="${d1Cat1Votes}"></span>
+            </p>
+             <p> <span th:text="${duel.duelist2?.name}"></span>
+                <span th:text="${d2Cat1Votes}"></span>
+            </p>
         </section>
-        -->
     </main>
 </body>
 </html>
