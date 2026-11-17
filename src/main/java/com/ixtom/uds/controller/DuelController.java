@@ -27,12 +27,12 @@ public class DuelController {
     @Autowired
     private DuelRepository duelRepo;
 
-    @GetMapping("/upload")
-    public String getUpload(Model model) {
-        model.addAttribute("newduel", new NewDuelRequest(null, null, null, null, null));
+    // @GetMapping("/upload")
+    // public String getUpload(Model model) {
+    //     model.addAttribute("newduel", new NewDuelRequest(null, null, null, null, null));
 
-        return "duel/upload";
-    }
+    //     return "duel/upload";
+    // }
 
     @GetMapping("/duelpage/{id}")
     public String duelPage(@PathVariable Long id, Model model) {
