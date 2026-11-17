@@ -1,7 +1,10 @@
 package com.ixtom.uds.controller;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,15 +14,26 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ixtom.uds.dto.EditDuelRequest;
 import com.ixtom.uds.dto.NewDuelRequest;
+import com.ixtom.uds.dto.VoteRequest;
 import com.ixtom.uds.model.Duel;
+import com.ixtom.uds.model.Vote;
 import com.ixtom.uds.model.UserAuthPrincipal;
+import com.ixtom.uds.model.UserProfile;
 import com.ixtom.uds.repository.DuelRepository;
+import com.ixtom.uds.repository.UserProfileRepository;
+import com.ixtom.uds.repository.VoteRepository;
 import com.ixtom.uds.utils.SocialLink;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+
 
 @Controller
 public class DuelController {
@@ -27,17 +41,61 @@ public class DuelController {
     @Autowired
     private DuelRepository duelRepo;
 
+    @Autowired
+    private VoteRepository voteRepo;
+
+    @Autowired
+    private UserProfileRepository userProfileRepo;
+    
     @GetMapping("/upload")
     public String getUpload(Model model) {
         model.addAttribute("newduel", new NewDuelRequest(null, null, null, null, null));
 
         return "duel/upload";
     }
+    @PostMapping("/duelpage/{id}")
+    public ResponseEntity<Void> submitVote(@PathVariable Long id, @ModelAttribute VoteRequest voteRequest,
+        @AuthenticationPrincipal UserAuthPrincipal principal) {
+    
+    if (principal == null) {
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+    }
+
+    UserProfile voter = userProfileRepo.findById(principal.getId())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+    Vote vote = voteRepo.findByDuelIdAndVoterId(id, voter.getId())
+            .orElse(new Vote());
+
+    vote.setVoter(voter);
+    vote.setDuel(getDuel(id));
+    vote.setCat1winner(voteRequest.cat1winner());
+    vote.setCat2winner(voteRequest.cat2winner());
+    vote.setCat3winner(voteRequest.cat3winner());
+    vote.setCat4winner(voteRequest.cat4winner());
+    vote.setCat5winner(voteRequest.cat5winner());
+
+    voteRepo.save(vote);
+    return ResponseEntity.ok().build();
+}
 
     @GetMapping("/duelpage/{id}")
-    public String duelPage(@PathVariable Long id, Model model) {
+    public String duelPage(@PathVariable Long id, Model model,  @AuthenticationPrincipal UserAuthPrincipal principal) {
         model.addAttribute("duel", getDuel(id));
+        if (principal == null) {
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+        UserProfile voter = userProfileRepo.findById(principal.getId())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+        Vote vote = voteRepo.findByDuelIdAndVoterId(id, voter.getId()).orElse(null);
 
+        model.addAttribute("voteRequest", vote == null
+        ? new VoteRequest(null, null, null, null, null)
+        : new VoteRequest(
+                vote.getCat1winner(),
+                vote.getCat2winner(),
+                vote.getCat3winner(),
+                vote.getCat4winner(),
+                vote.getCat5winner()));
         return "duel/view";
     }
 
@@ -138,5 +196,9 @@ public class DuelController {
 
     private Duel getDuel(Long id) {
         return duelRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    private Vote getVote(Long duelId, Long voterId) {
+        return voteRepo.findByDuelIdAndVoterId(duelId, voterId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }
