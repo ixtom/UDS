@@ -40,18 +40,29 @@
         </section>
         <section class="voting">
             <p>Category 1</p>
-            <form th:action="@{/duelpage/{id}/vote(id=${duel.id})}"
-                th:object="${voteRequest}" method="post">
-                <select th:field="*{cat1winner}">
-                    <option th:if="${duel.duelist1 != null}"
-                            th:value="${duel.duelist1.id}"
-                            th:text="${duel.duelist1.name}"></option>
-                    <option th:if="${duel.duelist2 != null}"
-                            th:value="${duel.duelist2.id}"
-                            th:text="${duel.duelist2.name}"></option>
-                </select>
-                <button type="submit">Vote</button>
-            </form>
+            <div th:if="${currentUser != null}">
+                <form th:action="@{/duelpage/{id}(id=${duel.id})}"
+                    th:object="${voteRequest}" method="post">
+                    <select th:field="*{cat1winner}">
+                        <option th:if="${duel.duelist1 != null}"
+                                th:value="${duel.duelist1?.id}"
+                                th:text="${duel.duelist1?.name}"></option>
+                        <option th:if="${duel.duelist2 != null}"
+                                th:value="${duel.duelist2?.id}"
+                                th:text="${duel.duelist2?.name}"></option>
+                    </select>
+                    <button type="submit">Vote</button>
+                </form>
+            </div>
+            <p th:unless="${currentUser != null}">
+                <a th:href="@{/login}">Log in to vote</a>
+            </p>
+            <p> <span th:text="${duel.duelist1?.name}"></span>
+                <span th:text="${d1Cat1Votes}"></span>
+            </p>
+             <p> <span th:text="${duel.duelist2?.name}"></span>
+                <span th:text="${d2Cat1Votes}"></span>
+            </p>
         </section>
     </main>
 </body>

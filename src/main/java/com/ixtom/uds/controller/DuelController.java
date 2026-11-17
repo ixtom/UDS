@@ -4,7 +4,6 @@ import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ixtom.uds.dto.EditDuelRequest;
 import com.ixtom.uds.dto.NewDuelRequest;
@@ -54,11 +51,11 @@ public class DuelController {
         return "duel/upload";
     }
     @PostMapping("/duelpage/{id}")
-    public ResponseEntity<Void> submitVote(@PathVariable Long id, @ModelAttribute VoteRequest voteRequest,
+    public String submitVote(@PathVariable Long id, @ModelAttribute VoteRequest voteRequest,
         @AuthenticationPrincipal UserAuthPrincipal principal) {
     
     if (principal == null) {
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        return "redirect:/login";
     }
 
     UserProfile voter = userProfileRepo.findById(principal.getId())
@@ -75,18 +72,20 @@ public class DuelController {
     vote.setCat5winner(voteRequest.cat5winner());
 
     voteRepo.save(vote);
-    return ResponseEntity.ok().build();
+    return "redirect:/duelpage/" + id;
 }
 
     @GetMapping("/duelpage/{id}")
     public String duelPage(@PathVariable Long id, Model model,  @AuthenticationPrincipal UserAuthPrincipal principal) {
-        model.addAttribute("duel", getDuel(id));
-        if (principal == null) {
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        Duel duel = getDuel(id);
+        model.addAttribute("duel", duel);
+
+        Vote vote = null;
+        if (principal != null) {
+            UserProfile voter = userProfileRepo.findById(principal.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+            vote = voteRepo.findByDuelIdAndVoterId(id, voter.getId()).orElse(null);
         }
-        UserProfile voter = userProfileRepo.findById(principal.getId())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
-        Vote vote = voteRepo.findByDuelIdAndVoterId(id, voter.getId()).orElse(null);
 
         model.addAttribute("voteRequest", vote == null
         ? new VoteRequest(null, null, null, null, null)
@@ -96,8 +95,14 @@ public class DuelController {
                 vote.getCat3winner(),
                 vote.getCat4winner(),
                 vote.getCat5winner()));
+        Long d1Id = duel.getDuelist1() != null ? duel.getDuelist1().getId() : null;
+        Long d2Id = duel.getDuelist2() != null ? duel.getDuelist2().getId() : null;
+
+    model.addAttribute("d1Cat1Votes", d1Id != null ? voteRepo.countByDuelIdAndCat1winner(id, d1Id) : 0);
+    model.addAttribute("d2Cat1Votes", d2Id != null ? voteRepo.countByDuelIdAndCat1winner(id, d2Id) : 0);
         return "duel/view";
     }
+    
 
     @PostMapping("/upload")
     public String upload(@Valid @ModelAttribute("newduel") NewDuelRequest duelReq, BindingResult bindingResult, Model model) {
