@@ -55,6 +55,15 @@ public class Duel {
     @Column(name = "videoid2", length = 11)
     private String videoid2;
 
+    public Duel(Duelist duelist1, Duelist duelist2) {
+        this.duelist1 = duelist1;
+        this.duelist2 = duelist2;
+
+        // these are not used but better to be safe
+        this.user1 = duelist1.getOwner();
+        this.user2 = duelist2.getOwner();
+    }
+
     public Duel() {}
 
     public Long getId() {
