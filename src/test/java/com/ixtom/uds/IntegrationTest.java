@@ -1,5 +1,8 @@
 package com.ixtom.uds;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -7,10 +10,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.Instant;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -30,6 +35,7 @@ import com.ixtom.uds.repository.DuelRepository;
 import com.ixtom.uds.repository.DuelistRepository;
 import com.ixtom.uds.repository.UserAuthRepository;
 import com.ixtom.uds.repository.UserProfileRepository;
+import com.ixtom.uds.service.TurnstileService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
@@ -45,6 +51,11 @@ import jakarta.servlet.http.Cookie;
 public abstract class IntegrationTest {
 
     protected static final String PASSWORD = "Passw0rd!";
+
+    protected static final String VALID_TURNSTILE_TOKEN = "valid-token";
+    protected static final String INVALID_TURNSTILE_TOKEN = "invalid-token";
+
+    @MockitoBean protected TurnstileService turnstileService;
 
     @Autowired protected MockMvc mvc;
     @Autowired protected EntityManager em;
@@ -79,6 +90,7 @@ public abstract class IntegrationTest {
         MvcResult result = mvc.perform(post("/login")
                 .param("email", email)
                 .param("password", password)
+                .param("cf-turnstile-response", VALID_TURNSTILE_TOKEN)
                 .with(csrf()))
             .andExpect(redirectedUrl("/"))
             .andReturn();
@@ -107,5 +119,14 @@ public abstract class IntegrationTest {
     protected void flushAndClear() {
         em.flush();
         em.clear();
+    }
+
+    @BeforeEach
+    void configureMock() {
+        when(turnstileService.isValidToken(eq(VALID_TURNSTILE_TOKEN), any()))
+            .thenReturn(true);
+
+        when(turnstileService.isValidToken(eq(INVALID_TURNSTILE_TOKEN), any()))
+            .thenReturn(false);
     }
 }

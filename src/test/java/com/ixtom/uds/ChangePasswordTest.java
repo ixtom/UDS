@@ -24,6 +24,7 @@ class ChangePasswordTest extends IntegrationTest {
                 .param("currentPassword", PASSWORD)
                 .param("newPassword", NEW_PASSWORD)
                 .param("confirmPassword", NEW_PASSWORD)
+                .param("cf-turnstile-response", VALID_TURNSTILE_TOKEN)
                 .with(csrf()))
             .andExpect(redirectedUrl("/login?passwordChanged"));
     }
@@ -62,7 +63,8 @@ class ChangePasswordTest extends IntegrationTest {
         mvc.perform(post("/login")
                 .param("email", "jayden@example.com")
                 .param("password", PASSWORD)
+                .param("cf-turnstile-response", VALID_TURNSTILE_TOKEN)
                 .with(csrf()))
-            .andExpect(redirectedUrl("/login?error"));
+            .andExpect(content().string(containsString("Invalid email or password")));
     }
 }
