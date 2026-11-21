@@ -8,10 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.ixtom.uds.dto.LoginRequest;
 import com.ixtom.uds.dto.RegisterRequest;
 import com.ixtom.uds.model.UserAuth;
 import com.ixtom.uds.model.UserAuth.Role;
@@ -61,15 +64,37 @@ public class AuthController {
     @Autowired
     private OAuthHandlerService oauthHandlerService;
 
-    // https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/form.html
+    @Autowired
+    private SessionAuthenticationStrategy sessionAuthenticationStrategy;
 
     @GetMapping("/login")
-    public String getLogin(@AuthenticationPrincipal UserAuthPrincipal auth) {
+    public String getLogin(@AuthenticationPrincipal UserAuthPrincipal auth, Model model) {
         if (auth != null) {
             return "redirect:/";
         }
 
+        model.addAttribute("loginRequest", new LoginRequest(null, null));
+
         return "auth/login";
+    }
+
+    @PostMapping("/login")
+    public String login(@Valid @ModelAttribute LoginRequest req, BindingResult bindingResult, HttpServletRequest request, HttpServletResponse response) {
+
+        if (bindingResult.hasErrors()) {
+            return "auth/login";
+        }
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                UsernamePasswordAuthenticationToken.unauthenticated(req.email(), req.password()));
+
+            authenticate(authentication, request, response);
+            return "redirect:/";
+        } catch (AuthenticationException ex) {
+            bindingResult.reject("login.failed", "Invalid email or password");
+            return "auth/login";
+        }
     }
 
     @GetMapping("/register")
@@ -105,11 +130,7 @@ public class AuthController {
             new UsernamePasswordAuthenticationToken(userAuth.getEmail(), req.password())
         );
 
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
-        SecurityContextHolder.setContext(context);
-
-        securityContextRepository.saveContext(context, request, response);
+        authenticate(authentication, request, response);
 
         return "redirect:/";
     }
@@ -179,5 +200,15 @@ public class AuthController {
 
 	private static boolean timePassed(Instant start, Duration duration) {
 		return !(start.plus(duration).isAfter(Instant.now()));
+	}
+
+	private void authenticate(Authentication authentication, HttpServletRequest request, HttpServletResponse response) {
+	    sessionAuthenticationStrategy.onAuthentication(authentication, request, response);
+
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+
+        securityContextRepository.saveContext(context, request, response);
 	}
 }

@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Duelist</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <div th:replace="~{fragments/cf :: turnstile-head}"></div>
 </head>
 <body>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
     <form th:action="@{/duelist/create}" th:object="${createDuelistRequest}" method="post">
+        <p th:each="err : ${#fields.errors('global')}" th:text="${err}"></p>
         <label for="name">Name</label>
         <input type="text" th:field="*{name}" required>
         <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
@@ -25,7 +27,8 @@
         <textarea th:field="*{description}" rows="5"></textarea>
         <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
         <br>
-        <button type="submit">Submit</button>
+        <div th:replace="~{fragments/cf :: turnstile}"></div>
+        <button type="submit" disabled>Submit</button>
     </form>
 </body>
 </html>
