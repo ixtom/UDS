@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import com.ixtom.uds.config.TurnstileProperties;
 import com.ixtom.uds.model.UserAuth;
 import com.ixtom.uds.model.UserAuthPrincipal;
 import com.ixtom.uds.repository.UserAuthRepository;
@@ -16,6 +17,9 @@ public class GlobalModelAttributes {
    @Autowired
    private UserAuthRepository userAuthRepository;
 
+   @Autowired
+   private TurnstileProperties turnstileProperties;
+
     @ModelAttribute("currentUser")
     public UserAuth addUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -25,5 +29,10 @@ public class GlobalModelAttributes {
         }
 
         return null;
+    }
+
+    @ModelAttribute("turnstileSiteKey")
+    public String addTurnstileSiteKey() {
+        return turnstileProperties.getSiteKey();
     }
 }

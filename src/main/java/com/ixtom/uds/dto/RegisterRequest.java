@@ -1,9 +1,12 @@
 package com.ixtom.uds.dto;
 
+import com.ixtom.uds.validation.ValidCfTurnstile;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+@ValidCfTurnstile
 public record RegisterRequest(
     @NotBlank(message = "Enter your email address.")
     @Email(message = "Enter a valid email address, like name@example.com.")

@@ -1,0 +1,14 @@
+<th:block th:fragment="turnstile-head">
+    <script src="/js/cf-turnstile.js" defer></script>
+
+    <link rel="preconnect" href="https://challenges.cloudflare.com">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</th:block>
+
+<th:block th:fragment="turnstile">
+    <div class="cf-turnstile"
+        th:data-sitekey="${turnstileSiteKey}"
+        data-callback="onCfTurnstileSuccess"
+		data-expired-callback="onCfTurnstileExpired"
+    ></div>
+</th:block>

@@ -21,6 +21,7 @@ class PreventReusedEmailTest extends IntegrationTest {
                 .param("email", "fresh@example.com")
                 .param("username", "fresh_user")
                 .param("password", "Passw0rd!")
+                .param("cf-turnstile-response", VALID_TURNSTILE_TOKEN)
                 .with(csrf()))
             .andExpect(redirectedUrl("/"));
 
@@ -39,6 +40,7 @@ class PreventReusedEmailTest extends IntegrationTest {
                 .param("email", "original@example.com")
                 .param("username", "alt_account")
                 .param("password", "Different1!")
+                .param("cf-turnstile-response", VALID_TURNSTILE_TOKEN)
                 .with(csrf()))
             .andExpect(status().isOk())
             .andExpect(view().name("auth/register"))
