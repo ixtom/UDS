@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ixtom.uds.dto.CreateCompetitionRequest;
 import com.ixtom.uds.dto.JoinCompetitionRequest;
@@ -23,11 +25,13 @@ import com.ixtom.uds.model.Competition;
 import com.ixtom.uds.model.CompetitionEntry;
 import com.ixtom.uds.model.Duel;
 import com.ixtom.uds.model.Duelist;
+import com.ixtom.uds.model.Matchup;
 import com.ixtom.uds.model.UserAuthPrincipal;
 import com.ixtom.uds.repository.CompetitionEntryRepository;
 import com.ixtom.uds.repository.CompetitionRepository;
 import com.ixtom.uds.repository.DuelRepository;
 import com.ixtom.uds.repository.DuelistRepository;
+import com.ixtom.uds.repository.MatchupRepository;
 
 import jakarta.validation.Valid;
 
@@ -45,6 +49,9 @@ public class CompetitionController {
 
     @Autowired 
     private DuelRepository duelRepo;
+
+    @Autowired 
+    private MatchupRepository matchupRepo;
 
     @GetMapping("/admin/competitions/new")
     public String getCreateCompetition(Model model) {
@@ -102,6 +109,7 @@ public class CompetitionController {
         Competition competition = getCompetitionOrThrow(id);
         model.addAttribute("competition", competition);
         model.addAttribute("duels", duelRepo.findByCompetitionIdOrderByRoundnum(id));
+        model.addAttribute("matchups", matchupRepo.findByCompetitionId(id));
 
         return "competition/manage";
     }
@@ -185,13 +193,20 @@ public class CompetitionController {
             && competitionEntryRepo.existsByCompetitionIdAndDuelistOwnerId(competition.getId(), userId);
     }
 
-    @PostMapping("/admin/competitions/{id}/pair")
-    public String pairOpponents(@PathVariable Long id) {
+    @PostMapping("/admin/competitions/{id}/matchups")
+    public String generateMatchups(@PathVariable Long id, RedirectAttributes redirect) {
         Competition competition = getCompetitionOrThrow(id);
         int round = duelRepo.findLatestRound(id) + 1;
-        if (!competition.started() || round > competition.getRounds()) {
+        if (!competition.started()) {
+            redirect.addFlashAttribute("error", "The competition hasn't started yet.");
             return "redirect:/admin/competitions/" + id;
         }
+        if (round > competition.getRounds()) {
+            redirect.addFlashAttribute("error", "All rounds are already paired.");
+            return "redirect:/admin/competitions/" + id;
+        }
+
+        matchupRepo.deleteByCompetitionId(id);
 
         List<Duelist> pool = new ArrayList<>();
         for (CompetitionEntry entry : competition.getParticipants()) {
@@ -216,19 +231,39 @@ public class CompetitionController {
             }
             pool.remove(opponent);
 
-            Duel duel = new Duel();
-            duel.setCompetition(competition);
-            duel.setRoundnum(round);
-            duel.setDuelist1(a);
-            duel.setDuelist2(opponent);
-            duel.setUser1(a.getOwner());
-            duel.setUser2(opponent.getOwner());
-            duel.setVideoid1("");
-            duel.setVideoid2("");
-            duelRepo.save(duel);
+            matchupRepo.save(new Matchup(competition, a, opponent));
         }
 
         return "redirect:/admin/competitions/" + id;
     }
+
+    @Transactional 
+    @PostMapping("/admin/competitions/{id}/duels")
+    public String createDuels(@PathVariable Long id, RedirectAttributes redirect) {
+        Competition competition = getCompetitionOrThrow(id);
+        int round = duelRepo.findLatestRound(id) + 1;
+        if (!competition.started()) {
+            redirect.addFlashAttribute("error", "The competition hasn't started yet.");
+            return "redirect:/admin/competitions/" + id;
+        }
+        if (round > competition.getRounds()) {
+            redirect.addFlashAttribute("error", "All rounds are already paired.");
+            return "redirect:/admin/competitions/" + id;
+        }
+
+        List<Matchup> matchups = matchupRepo.findByCompetitionId(id);
+        if (matchups.isEmpty()) {
+            redirect.addFlashAttribute("error", "No draft matchups. Generate matchups first.");
+            return "redirect:/admin/competitions/" + id;
+        }
+
+        for (Matchup matchup : matchups) {
+            duelRepo.save(new Duel(competition, round, matchup.getDuelist1(), matchup.getDuelist2()));
+        }
+        matchupRepo.deleteByCompetitionId(id);
+
+        return "redirect:/admin/competitions/" + id;
+    }
+    
     
 }
