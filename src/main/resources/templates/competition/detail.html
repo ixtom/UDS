@@ -32,6 +32,25 @@
         <li th:each="p : ${competition.participants}" th:text="${p.duelist.name} + ' (' + ${p.duelist.owner.username} + ')'"></li>
     </ul>
 
+    <h4 class="mt-4">Leaderboard</h4>
+    <p class="text-muted" th:if="${leaderboard.isEmpty()}">Nobody has joined yet.</p>
+    <table class="table table-sm" th:unless="${leaderboard.isEmpty()}">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Duelist</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="e, stat : ${leaderboard}" th:classappend="${e.eliminated} ? 'text-muted'">
+                <td th:text="${stat.count}"></td>
+                <td th:text="${e.duelist.name} + ' (' + ${e.duelist.owner.username} + ')'"></td>
+                <td th:text="${e.score}"></td>
+            </tr>
+        </tbody>
+    </table>
+
     <h4 class="mt-4">Matchups (<span th:text="${#lists.size(duels)}"></span>)</h4>
     <p class="text-muted" th:if="${duels.isEmpty()}">No matchups yet.</p>
     <ul>
