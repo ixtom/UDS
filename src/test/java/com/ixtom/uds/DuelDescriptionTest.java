@@ -38,9 +38,9 @@ class DuelDescriptionTest extends IntegrationTest {
             .andExpect(content().string(containsString("Blaze returns to settle an old score.")));
     }
 
-    // Story 7, Failure row: write a paragraph over 2000 characters and save -> error and nothing is saved
+    // Story 7, Failure row: write a paragraph over 5000 characters and save -> error and nothing is saved
     @Test
-    void descriptionOver2000CharactersIsRejected() throws Exception {
+    void descriptionOver5000CharactersIsRejected() throws Exception {
         UserAuth owner = createUser("justin");
         Duel duel = createDuel(createDuelist(owner, "Blaze"), createDuelist(createUser("keith"), "Frost"));
         duel.setDescription("Original description");
@@ -51,7 +51,7 @@ class DuelDescriptionTest extends IntegrationTest {
                 .param("video", "")
                 .param("banner", "")
                 .param("title", "")
-                .param("description", "a".repeat(2001))
+                .param("description", "a".repeat(5001))
                 .with(as(owner))
                 .with(csrf()))
             .andExpect(status().isOk())
