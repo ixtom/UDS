@@ -18,4 +18,6 @@ public interface CompetitionEntryRepository extends JpaRepository<CompetitionEnt
 
     @Transactional
     public void deleteByCompetitionIdAndDuelistOwnerId(Long competitionId, Long userId);
+
+    public List<CompetitionEntry> findByCompetitionIdOrderByScoreDescDuelistNameAsc(Long competitionId);
 }
