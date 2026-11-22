@@ -33,12 +33,9 @@ class LoginTest extends IntegrationTest {
         mvc.perform(post("/login")
                 .param("email", "benny@example.com")
                 .param("password", "WrongPass1!")
+                .param("cf-turnstile-response", VALID_TURNSTILE_TOKEN)
                 .with(csrf()))
-            .andExpect(redirectedUrl("/login?error"));
-
-        mvc.perform(get("/login").param("error", ""))
-            .andExpect(status().isOk())
-            .andExpect(content().string(containsString("Wrong email or password")));
+            .andExpect(content().string(containsString("Invalid email or password")));
     }
 
     // Story 2, Failure row: wrong email or password -> error shown on login page
@@ -47,8 +44,9 @@ class LoginTest extends IntegrationTest {
         mvc.perform(post("/login")
                 .param("email", "nobody@example.com")
                 .param("password", PASSWORD)
+                .param("cf-turnstile-response", VALID_TURNSTILE_TOKEN)
                 .with(csrf()))
-            .andExpect(redirectedUrl("/login?error"));
+            .andExpect(content().string(containsString("Invalid email or password")));
     }
 
     // Story 3, Success row: log in, close the tab, reopen the site -> still logged in, landing page shown

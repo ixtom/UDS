@@ -28,6 +28,7 @@ class RegisterTest extends IntegrationTest {
                 .param("email", "benny@example.com")
                 .param("username", "benny")
                 .param("password", "Passw0rd!")
+                .param("cf-turnstile-response", VALID_TURNSTILE_TOKEN)
                 .with(csrf()))
             .andExpect(status().is3xxRedirection())
             .andExpect(redirectedUrl("/"))
