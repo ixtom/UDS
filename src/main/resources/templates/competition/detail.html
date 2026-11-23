@@ -18,6 +18,9 @@
               th:datetime="${competition.start}"></time>
     </p>
     <p>Rounds: <span th:text="${competition.rounds}"></span></p>
+    <p>Each round: <span th:text="${competition.animationDays}"></span> days animating,
+        <span th:text="${competition.votingDays}"></span> days voting</p>
+    <p>Ends: <time class="convert-to-local-date-and-time" th:datetime="${competition.competitionEnd()}"></time></p>
     <p>Max participants: <span th:text="${competition.maxParticipants}"></span></p>
 
     <a th:if="${canJoin}" th:href="@{/competitions/{id}/join(id=${competition.id})}" class="btn btn-primary">Join</a>
