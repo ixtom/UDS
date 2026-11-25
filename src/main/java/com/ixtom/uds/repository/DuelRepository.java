@@ -27,8 +27,12 @@ public interface DuelRepository extends JpaRepository<Duel, Long> {
 
     @Query("""
         SELECT d FROM Duel d
+        LEFT JOIN FETCH d.duelist1
+        LEFT JOIN FETCH d.duelist2
+        LEFT JOIN FETCH d.competition
         WHERE d.duelist1.id = :duelistId
            OR d.duelist2.id = :duelistId
+        ORDER BY d.id DESC
     """)
     List<Duel> findByDuelist(Long duelistId);
 
