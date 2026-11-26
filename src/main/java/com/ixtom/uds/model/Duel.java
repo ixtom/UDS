@@ -1,5 +1,7 @@
 package com.ixtom.uds.model;
 
+import java.time.Instant;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,11 @@ public class Duel {
     @JoinColumn(name = "competition_id")
     private Competition competition;
     private Integer roundnum;
+    private Instant startDate;
+    private Instant endDate;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean scored = false;
 
     // change in later iteration
     private String duelBanner;
@@ -179,4 +186,30 @@ public class Duel {
     public void setVideoid2(String videoid2) {
         this.videoid2 = videoid2;
     }
+
+    public Instant getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Instant startDate) {
+        this.startDate = startDate;
+    }
+
+    public Instant getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Instant endDate) {
+        this.endDate = endDate;
+    }
+
+    public boolean isScored() {
+        return scored;
+    }
+
+    public void setScored(boolean scored) {
+        this.scored = scored;
+    }
+
+    
 }
