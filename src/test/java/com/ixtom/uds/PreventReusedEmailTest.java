@@ -44,7 +44,7 @@ class PreventReusedEmailTest extends IntegrationTest {
                 .with(csrf()))
             .andExpect(status().isOk())
             .andExpect(view().name("auth/register"))
-            .andExpect(model().attributeHasFieldErrorCode("registerRequest", "email", "taken"));
+            .andExpect(model().attributeHasFieldErrorCode("registerRequest", "email", "register.email.already_exists"));
 
         flushAndClear();
         assertThat(userAuthRepo.count()).isEqualTo(accountsBefore);

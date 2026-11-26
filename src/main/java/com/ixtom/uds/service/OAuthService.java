@@ -56,7 +56,6 @@ public class OAuthService {
         }
     }
 
-
     public void login(AccountLink link, HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         OAuth2AuthorizedClient client = authorizedClientRepository.loadAuthorizedClient(link.getId().getProvider(), auth, request);

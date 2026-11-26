@@ -79,7 +79,7 @@ class RegisterTest extends IntegrationTest {
                 .with(csrf()))
             .andExpect(status().isOk())
             .andExpect(view().name("auth/register"))
-            .andExpect(model().attributeHasFieldErrorCode("registerRequest", "email", "taken"))
+            .andExpect(model().attributeHasFieldErrorCode("registerRequest", "email", "register.email.already_exists"))
             .andExpect(content().string(org.hamcrest.Matchers.containsString("An account with that email already exists.")));
 
         assertThat(userProfileRepo.findByUsername("newcomer")).isEmpty();
