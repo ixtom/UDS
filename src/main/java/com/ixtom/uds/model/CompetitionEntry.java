@@ -3,6 +3,7 @@ package com.ixtom.uds.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -29,8 +30,16 @@ public class CompetitionEntry {
     @JoinColumn(name = "duelist_id")
     private Duelist duelist;
 
+    // currently ranked based on score. When win/loss record of a duelist is made, we can use these fields. 
+    //@Column(nullable = false, columnDefinition = "integer default 0")
+    //private int wins = 0;
+    // @Column(nullable = false, columnDefinition = "integer default 0")
+    // private int losses = 0;
+    @Column(nullable = false, columnDefinition = "integer default 0")
     private int score = 0;
+
     private int round = 1;
+
     private boolean eliminated = false;
 
     public CompetitionEntry(Competition competition, Duelist duelist) {

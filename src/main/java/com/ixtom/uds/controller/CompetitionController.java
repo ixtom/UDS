@@ -92,7 +92,7 @@ public class CompetitionController {
 
         model.addAttribute("competition", competition);
         model.addAttribute("duels", duelRepo.findByCompetitionIdOrderByRoundnum(id));
-
+        model.addAttribute("leaderboard", competitionEntryRepo.findByCompetitionIdOrderByScoreDescDuelistNameAsc(id));
         return "competition/detail";
     }
 

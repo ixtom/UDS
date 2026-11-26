@@ -2,12 +2,14 @@ package com.ixtom.uds.dto;
 
 import com.ixtom.uds.utils.SocialLink;
 import com.ixtom.uds.validation.OptionalSocialLink;
+import com.ixtom.uds.validation.ValidCfTurnstile;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+@ValidCfTurnstile
 public record NewDuelRequest(
     @NotBlank
     @OptionalSocialLink(type = SocialLink.YOUTUBE_VIDEO)
