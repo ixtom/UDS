@@ -8,4 +8,5 @@ import com.ixtom.uds.model.UserProfile;
 
 public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
     Optional<UserProfile> findByUsername(String username);
+    boolean existsByUsername(String username);
 }

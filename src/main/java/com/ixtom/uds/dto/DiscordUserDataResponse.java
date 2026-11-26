@@ -1,18 +1,24 @@
 package com.ixtom.uds.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.validation.constraints.NotNull;
-
 public record DiscordUserDataResponse (
     long id,
-    @NotNull
+    String email,
     String username,
 
-    // Nullable
-    @JsonProperty("global_name")
-    String globalName,
     String avatar,
-    Boolean verified,
-    String email
-) {}
+    Boolean verified
+) implements OAuthUserInfo {
+
+	@Override
+	public String externalId() {
+		return String.valueOf(id);
+	}
+
+	@Override
+	public String pfpUrl() {
+	if (avatar == null) {
+	    return null;
+	}
+	    return "https://cdn.discordapp.com/avatars/" + id + "/" + avatar + ".png";
+	}
+}

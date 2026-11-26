@@ -61,7 +61,7 @@ class LinkDiscordTest extends IntegrationTest {
                 Instant.now(), Instant.now().plusSeconds(3600)));
         when(authorizedClientService.<OAuth2AuthorizedClient>loadAuthorizedClient(eq("discord"), anyString()))
             .thenReturn(client);
-        when(discordService.getExternalId()).thenReturn(discordUserId);
+        when(discordService.getOAuthUserInfo().externalId()).thenReturn(discordUserId);
     }
 
     // Story 9, Success row: press the link discord button & follow through with discord authentication -> Discord gets linked
