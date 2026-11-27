@@ -35,7 +35,7 @@ public class UserAuth {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String hashedPassword;
 
     @Enumerated(EnumType.STRING)

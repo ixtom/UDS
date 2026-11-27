@@ -25,4 +25,22 @@ public interface AccountLinkRepository extends JpaRepository<AccountLink, Accoun
         AND entry.id.externalId = :externalId
     """)
     Optional<AccountLink> findByProviderAndExternalId(String provider, String externalId);
+
+    @Query("""
+        SELECT CASE WHEN EXISTS (
+            SELECT a FROM AccountLink a
+            WHERE a.id.provider = :provider
+            AND a.user.id = :userId
+        ) THEN TRUE ELSE FALSE END
+    """)
+    boolean existsByProviderAndUserId(String provider, Long userId);
+
+    @Query("""
+        SELECT CASE WHEN EXISTS (
+            SELECT a FROM AccountLink a
+            WHERE a.id.provider = :provider
+            AND a.id.externalId = :externalId
+        ) THEN TRUE ELSE FALSE END
+    """)
+    boolean existsByProviderAndExternalId(String provider, String externalId);
 }

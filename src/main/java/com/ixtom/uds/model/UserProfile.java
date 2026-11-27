@@ -22,6 +22,8 @@ public class UserProfile {
     @Column(unique = true)
     private String username;
 
+    private String pfp;
+
     @Column(length = 2000)
     private String bio;
 
@@ -96,5 +98,17 @@ public class UserProfile {
 
 	public List<Duelist> getDuelists() {
 		return duelists;
+	}
+
+	public String getPfp() {
+		return pfp;
+	}
+
+	public void setPfp(String pfp) {
+		this.pfp = pfp;
+	}
+
+	public void setDuelists(List<Duelist> duelists) {
+		this.duelists = duelists;
 	}
 }

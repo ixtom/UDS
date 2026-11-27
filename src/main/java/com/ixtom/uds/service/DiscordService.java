@@ -13,14 +13,12 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 
 import com.ixtom.uds.dto.DiscordUserDataResponse;
+import com.ixtom.uds.dto.OAuthUserInfo;
 
 @Service
-@RestController
 public class DiscordService { // MAYBE: make a interface for oauth info
 
     private static final String baseUrl = "https://discord.com/api/v10/";
@@ -37,12 +35,14 @@ public class DiscordService { // MAYBE: make a interface for oauth info
         this.restClient = restClient.mutate().baseUrl(baseUrl).build();
     }
 
-    // if can use api for this user, can be false even when discord is linked
-    public boolean isAuthorized() {
-        return authorizedClientService.loadAuthorizedClient("discord", SecurityContextHolder.getContext().getAuthentication().getName()) != null;
+    public String getExternalId() {
+        return getUserData().externalId();
     }
 
-    @GetMapping("/discord")
+    public OAuthUserInfo getOAuthUserInfo() {
+        return getUserData();
+    }
+
     public DiscordUserDataResponse getUserData() {
         return restClient
             .get()
@@ -52,8 +52,9 @@ public class DiscordService { // MAYBE: make a interface for oauth info
             .body(DiscordUserDataResponse.class);
     }
 
-    public String getExternalId() {
-        return String.valueOf(getUserData().id());
+    // if can use api for this user, can be false even when discord is linked
+    public boolean isAuthorized() {
+        return authorizedClientService.loadAuthorizedClient("discord", SecurityContextHolder.getContext().getAuthentication().getName()) != null;
     }
 
     public void revokeToken() {

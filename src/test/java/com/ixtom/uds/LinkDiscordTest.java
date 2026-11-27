@@ -1,115 +1,223 @@
 package com.ixtom.uds;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.Instant;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.security.oauth2.core.OAuth2RefreshToken;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
+import com.ixtom.uds.dto.DiscordUserDataResponse;
 import com.ixtom.uds.model.AccountLink;
 import com.ixtom.uds.model.UserAuth;
 import com.ixtom.uds.repository.AccountLinkRepository;
 import com.ixtom.uds.service.DiscordService;
+import com.ixtom.uds.service.OAuthService.Result;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
-/**
- * Discord itself is replaced with mocks: the test pretends Discord already approved the
- * user and reports the given Discord user ID. No request leaves the machine.
- */
 class LinkDiscordTest extends IntegrationTest {
 
-    @MockitoBean
+    @MockitoSpyBean
     private DiscordService discordService;
-
-    @MockitoBean
-    private OAuth2AuthorizedClientService authorizedClientService;
-
-    @Autowired
-    private ClientRegistrationRepository clientRegistrations;
 
     @Autowired
     private AccountLinkRepository accountLinkRepo;
 
-    /** Signs in and presses "Link Discord", which records the link attempt in the session. */
-    private Cookie startLinking(UserAuth user) throws Exception {
-        Cookie session = login(user.getEmail(), PASSWORD);
-        mvc.perform(get("/link/discord").cookie(session))
-            .andExpect(redirectedUrl("/oauth2/authorization/discord"));
-        return session;
-    }
+    @MockitoSpyBean
+    private OAuth2AuthorizedClientRepository authorizedClientRepository;
 
+    @Autowired
+    private ClientRegistrationRepository clientRegistrationRepository;
+
+    private static final DiscordUserDataResponse one = new DiscordUserDataResponse(1, "a@b.c", "one", null, true);
+    private static final DiscordUserDataResponse two = new DiscordUserDataResponse(2, "b@b.c", "two", null, false);
+    private static final DiscordUserDataResponse three = new DiscordUserDataResponse(3, "c@b.c", "three", null, true);
+    private static final DiscordUserDataResponse four = new DiscordUserDataResponse(4, "d@b.c", "four", null, true);
+
+    /**
+     * Mocks the Discord account returned by the OAuth service.
+     */
     private void discordApprovesAs(String discordUserId) {
-        OAuth2AuthorizedClient client = new OAuth2AuthorizedClient(
-            clientRegistrations.findByRegistrationId("discord"),
-            "test-principal",
-            new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, "fake-token",
-                Instant.now(), Instant.now().plusSeconds(3600)));
-        when(authorizedClientService.<OAuth2AuthorizedClient>loadAuthorizedClient(eq("discord"), anyString()))
-            .thenReturn(client);
-        when(discordService.getExternalId()).thenReturn(discordUserId);
+        when(discordService.getExternalId())
+            .thenReturn(discordUserId);
     }
 
-    // Story 9, Success row: press the link discord button & follow through with discord authentication -> Discord gets linked
+    private OAuth2AuthorizedClient createOAuthClient(String provider, String principleName) {
+        ClientRegistration registration =
+            clientRegistrationRepository.findByRegistrationId(provider);
+
+        OAuth2AccessToken accessToken = new OAuth2AccessToken(
+            OAuth2AccessToken.TokenType.BEARER,
+            "test-access-token",
+            Instant.now(),
+            Instant.now().plusSeconds(3600),
+            Set.of("openid", "profile", "email")
+        );
+
+        OAuth2RefreshToken refreshToken = new OAuth2RefreshToken(
+            "test-refresh-token",
+            Instant.now()
+        );
+
+        return new OAuth2AuthorizedClient(
+            registration,
+            principleName,
+            accessToken,
+            refreshToken
+        );
+    }
+
+    private void discordApprovesAs(DiscordUserDataResponse data) {
+        doReturn(data).when(discordService).getUserData();
+
+        doReturn(createOAuthClient("discord", "asdf")).when(authorizedClientRepository)
+            .loadAuthorizedClient(
+                eq("discord"),
+                any(Authentication.class),
+                any(HttpServletRequest.class)
+            );
+    }
+
+    /**
+     * Performs the account-linking request.
+     */
+    private void linkDiscord(Cookie session) throws Exception {
+        mvc.perform(get("/link/discord").cookie(session))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/"));
+    }
+
+    // Story 9, Success:
+    // Link a Discord account successfully.
     @Test
     void linkingSucceeds() throws Exception {
         UserAuth user = createUser("benny");
-        Cookie session = startLinking(user);
-        discordApprovesAs("111111111111111111");
+        Cookie session = login(user.getEmail(), PASSWORD);
+        discordApprovesAs(one);
 
-        mvc.perform(get("/login/oauth2/code/discord").cookie(session))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/"));
+        linkDiscord(session);
 
-        AccountLink link = accountLinkRepo.findByProviderAndUserId("discord", user.getId()).orElseThrow();
-        assertThat(link.getId().getExternalId()).isEqualTo("111111111111111111");
+        AccountLink link = accountLinkRepo
+            .findByProviderAndUserId("discord", user.getId())
+            .orElseThrow();
+
+        assertThat(link.getId().getExternalId())
+            .isEqualTo("1");
     }
 
-    // Story 9, Failure row: linking a discord account that is already linked to another user's account -> error message displayed
+    // Story 9, Failure:
+    // Reject a Discord account already linked to another user.
     @Test
     void discordAccountLinkedToAnotherUserIsRejected() throws Exception {
         UserAuth other = createUser("first_owner");
-        accountLinkRepo.save(new AccountLink("discord", "222222222222222222", other));
+
+        accountLinkRepo.save(
+            new AccountLink("discord", "2", other)
+        );
+
         UserAuth user = createUser("benny");
-        Cookie session = startLinking(user);
-        discordApprovesAs("222222222222222222");
 
-        mvc.perform(get("/login/oauth2/code/discord").cookie(session))
+        Cookie session = login(user.getEmail(), PASSWORD);
+        discordApprovesAs(two);
+
+        mvc.perform(get("/link/discord").cookie(session))
             .andExpect(status().isBadRequest())
-            .andExpect(model().attribute("error", "This account is already linked to another user"));
+            .andExpect(status().reason(Result.OAUTH_ALREADY_LINKED.message));
 
-        assertThat(accountLinkRepo.findByProviderAndUserId("discord", user.getId())).isEmpty();
+        assertThat(accountLinkRepo.findByProviderAndUserId("discord", user.getId()))
+            .isEmpty();
+
         verify(discordService).revokeToken();
     }
 
-    // Story 9, Failure row: link discord to an account that already has discord linked -> error message displayed
+    // Story 9, Failure:
+    // Reject linking a second Discord account to the same user.
     @Test
     void accountAlreadyLinkedIsRejected() throws Exception {
         UserAuth user = createUser("benny");
-        accountLinkRepo.save(new AccountLink("discord", "333333333333333333", user));
-        Cookie session = startLinking(user);
-        discordApprovesAs("444444444444444444");
 
-        mvc.perform(get("/login/oauth2/code/discord").cookie(session))
+        accountLinkRepo.save(
+            new AccountLink("discord", "3", user)
+        );
+
+        Cookie session = login(user.getEmail(), PASSWORD);
+        discordApprovesAs(four);
+
+        mvc.perform(get("/link/discord").cookie(session))
             .andExpect(status().isBadRequest())
-            .andExpect(model().attribute("error", "Your account is already linked to this service"));
+            .andExpect(status().reason(Result.USER_ALREADY_LINKED.message));
 
         assertThat(accountLinkRepo.findByUserId(user.getId()))
             .extracting(link -> link.getId().getExternalId())
-            .containsExactly("333333333333333333");
+            .containsExactly("3");
+    }
+
+    @Test
+    void discordLoginSuccess() throws Exception {
+        UserAuth user = createUser("user1");
+        Cookie session = login(user.getEmail(), PASSWORD);
+
+        discordApprovesAs(one);
+        linkDiscord(session);
+
+        discordApprovesAs(one);
+        mvc.perform(get("/login/discord"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/"));
+    }
+
+    @Test
+    void discordLoginNoLinkedAccountPromptsRegister() throws Exception {
+        discordApprovesAs(one);
+
+        mvc.perform(get("/login/discord"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/register/discord"));
+    }
+
+    @Test
+    void discordRegisterAutofillsForm() throws Exception {
+        discordApprovesAs(one);
+
+        mvc.perform(get("/register/discord"))
+            .andExpect(status().is2xxSuccessful())
+            .andExpect(content().string(containsString(one.email())))
+            .andExpect(content().string(containsString(one.username())));
+    }
+
+    @Test
+    void discordRegisterCreatesAccount() throws Exception {
+        discordApprovesAs(one);
+
+        mvc.perform(post("/register/discord")
+            .param("email", one.email())
+            .param("username", one.username())
+            .param("cf-turnstile-response", VALID_TURNSTILE_TOKEN)
+            .with(csrf()))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/"));
     }
 }
