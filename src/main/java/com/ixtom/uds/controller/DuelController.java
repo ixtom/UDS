@@ -1,5 +1,7 @@
 package com.ixtom.uds.controller;
 
+import java.time.Instant;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -195,4 +197,8 @@ public class DuelController {
         return duelRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
     
+    private boolean isVotingOpen(Duel duel){
+        Instant now = Instant.now();
+        boolean afterStart = duel.getStartDate() == null;
+    }
 }
