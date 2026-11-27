@@ -237,7 +237,7 @@ public class CompetitionController {
             duel.setVideoid2("");
             Instant now = Instant.now();
             duel.setStartDate(now);
-            duel.setEndDate(now.plus(2, ChronoUnit.MINUTES));
+            duel.setEndDate(now.plus(30, ChronoUnit.DAYS));
             duelRepo.save(duel);
         }
 
