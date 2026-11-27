@@ -53,9 +53,10 @@ public class DuelController {
     public String duelPage(@PathVariable Long id, Model model,  @AuthenticationPrincipal UserAuthPrincipal principal) {
         Duel duel = getDuel(id);
         duelScoringService.finalizeDuelIfEnded(duel);
+        
         model.addAttribute("duel", duel);
-        model.addAttribute("isVotingOpen", isVotingOpen(duel))
-        duelScoringService.finalizeDuelIfEnded(duel);
+        model.addAttribute("isLoggedIn", principal != null);
+        model.addAttribute("isVotingOpen", isVotingOpen(duel));
 
         Vote vote = null;
         if (principal != null) {
