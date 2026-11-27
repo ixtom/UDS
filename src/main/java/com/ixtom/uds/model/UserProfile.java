@@ -2,17 +2,21 @@ package com.ixtom.uds.model;
 
 import java.util.List;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
+@DynamicUpdate
 @Table(name = "UserProfile")
 public class UserProfile {
 
@@ -30,6 +34,10 @@ public class UserProfile {
 
     @Column(length = 2048)
     private String instagramUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "avatar_asset_id")
+    private ImageAsset avatar;
 
     @OneToMany(mappedBy = "owner")
     private List<Duelist> duelists;
@@ -84,6 +92,18 @@ public class UserProfile {
 
     public void setInstagramUrl(String instagramUrl) {
         this.instagramUrl = instagramUrl;
+    }
+
+    public ImageAsset getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(ImageAsset avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getAvatarUrl() {
+        return avatar == null ? null : avatar.getUrl();
     }
 
     public UserAuth getUserAuth() {

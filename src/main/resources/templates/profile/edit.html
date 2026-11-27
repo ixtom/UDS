@@ -30,6 +30,8 @@
             <!-- We can add more Social links at another date -->
             <button type="submit">Save Profile</button>
         </form>
+        <section th:replace="~{fragments/image-editor :: editor('Profile picture', ${avatarUrl},
+                @{/account/profile/image}, @{/account/profile/image/remove})}"></section>
     </main>
 </body>
 </html>
