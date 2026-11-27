@@ -1,5 +1,10 @@
 package com.ixtom.uds.controller;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,10 +21,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ixtom.uds.dto.ChallengeDuelistRequest;
 import com.ixtom.uds.dto.EditDuelistRequest;
+import com.ixtom.uds.model.Competition;
+import com.ixtom.uds.model.CompetitionEntry;
 import com.ixtom.uds.model.Duel;
 import com.ixtom.uds.model.Duelist;
 import com.ixtom.uds.model.UserAuthPrincipal;
 import com.ixtom.uds.model.UserProfile;
+import com.ixtom.uds.repository.CompetitionEntryRepository;
 import com.ixtom.uds.repository.DuelRepository;
 import com.ixtom.uds.repository.DuelistRepository;
 import com.ixtom.uds.repository.UserProfileRepository;
@@ -36,6 +44,9 @@ public class DuelistController {
     private DuelRepository duelRepo;
 
     @Autowired
+    private CompetitionEntryRepository competitionEntryRepo;
+
+    @Autowired
     private DuelistRepository duelistRepo;
 
     @Autowired
@@ -44,12 +55,32 @@ public class DuelistController {
     @GetMapping("/{id:[0-9]+}")
     public String viewDuelist(@PathVariable Long id, Model model, @AuthenticationPrincipal UserAuthPrincipal principal) {
         Duelist duelist = getDuelist(id);
+        List<Duel> duels = duelRepo.findByDuelist(id);
 
         model.addAttribute("duelist", duelist);
         model.addAttribute("isOwner", principal != null && duelist.getOwner().getId().equals(principal.getId()));
+        model.addAttribute("duelHistory", duels);
+        model.addAttribute("competitionHistory", competitionHistory(id, duels));
 
         return "duelist/view";
     }
+
+    private List<CompetitionHistoryItem> competitionHistory(Long duelistId, List<Duel> duels) {
+        Map<Long, CompetitionHistoryItem> history = new TreeMap<>(Comparator.reverseOrder());
+        for (Duel duel : duels) {
+            Competition competition = duel.getCompetition();
+            if (competition != null) {
+                history.putIfAbsent(competition.getId(), new CompetitionHistoryItem(competition, true));
+            }
+        }
+        for (CompetitionEntry entry : competitionEntryRepo.findByDuelistId(duelistId)) {
+            Competition competition = entry.getCompetition();
+            history.putIfAbsent(competition.getId(), new CompetitionHistoryItem(competition, false));
+        }
+        return List.copyOf(history.values());
+    }
+
+    public record CompetitionHistoryItem(Competition competition, boolean hasMatchup) {}
 
     @GetMapping("/{id:[0-9]+}/edit")
     public String getEditDuelist(@PathVariable Long id, @AuthenticationPrincipal UserAuthPrincipal principal, Model model, HttpServletResponse response) {
