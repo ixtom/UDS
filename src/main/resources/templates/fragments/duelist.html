@@ -7,9 +7,10 @@
             class="duelist-card-title"
         ></div>
     </div>
-    <img
+    <img th:with="portrait=${duelist.portraitUrl}"
         class="duelist-card-image"
-        th:src="${#strings.isEmpty(duelist.photo) ? '/images/missing-image.svg' : duelist.photo}"
+        th:src="${#strings.isEmpty(portrait)} ? @{/images/missing-image.svg} : ${portrait}"
+        referrerpolicy="no-referrer"
         alt="Duelist photo"
     />
 </div>

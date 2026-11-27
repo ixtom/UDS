@@ -27,5 +27,7 @@
         <br>
         <button type="submit">Submit</button>
     </form>
+    <section th:replace="~{fragments/image-editor :: editor('Duelist portrait', ${portraitUrl},
+            @{/duelist/{id}/image(id=${duelistId})}, @{/duelist/{id}/image/remove(id=${duelistId})})}"></section>
 </body>
 </html>
