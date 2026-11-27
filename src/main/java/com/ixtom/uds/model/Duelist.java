@@ -45,7 +45,7 @@ public class Duelist {
     @OneToMany(mappedBy = "duelist")
     private List<CompetitionEntry> competitionEntries = new ArrayList<>();
 
-    private int score = 0;
+
     // methods
 
     public Duelist() {}
@@ -117,14 +117,5 @@ public class Duelist {
 	public List<CompetitionEntry> getCompetitionEntries() {
 		return competitionEntries;
 	}
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
     
 }
