@@ -3,7 +3,6 @@ package com.ixtom.uds.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,23 +47,21 @@ public class ProfileController {
         UserProfile profile = ownProfile(currentUser);
         model.addAttribute("editProfile", new EditProfileRequest(
                 profile.getBio(), profile.getYoutubeUrl(), profile.getInstagramUrl()));
-        model.addAttribute("avatarUrl", profile.getAvatarUrl());
         return "profile/edit";
     }
 
     @PostMapping("/account/profile/edit")
-    @Transactional
     public String saveProfile(@AuthenticationPrincipal UserAuthPrincipal currentUser,
-            @Valid @ModelAttribute("editProfile") EditProfileRequest request, BindingResult errors, Model model) {
+            @Valid @ModelAttribute("editProfile") EditProfileRequest request, BindingResult errors) {
         UserProfile profile = ownProfile(currentUser);
 
         if (errors.hasErrors()) {
-            model.addAttribute("avatarUrl", profile.getAvatarUrl());
             return "profile/edit";
         }
         profile.setBio(request.bio());
         profile.setYoutubeUrl(request.youtubeUrl());
         profile.setInstagramUrl(request.instagramUrl());
+        userProfileRepository.save(profile);
         return "redirect:/profile/" + profile.getUsername();
     }
 

@@ -25,7 +25,6 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**")
                 .hasRole("ADMIN")
                 .requestMatchers("/change-password", "/upload", "/account/profile/edit", "/dashboard/**").authenticated()
-                .requestMatchers("/account/profile/image/**", "/duelist/*/image/**").authenticated()
                 .anyRequest()
                 .permitAll()
         )

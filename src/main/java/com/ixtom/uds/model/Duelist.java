@@ -3,8 +3,6 @@ package com.ixtom.uds.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.annotations.DynamicUpdate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,7 +16,6 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
 
 @Entity
-@DynamicUpdate
 @Table(name="Duelist")
 public class Duelist {
     @Id
@@ -38,11 +35,8 @@ public class Duelist {
     @JoinColumn(name = "owner_id")
     private UserProfile owner;
 
+    // change to image in later iteration
     private String photo;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "portrait_asset_id")
-    private ImageAsset portrait;
 
     @Column(length = 11, nullable = false)
     @Pattern(regexp = "^$|^[a-zA-Z0-9_-]{11}$")
@@ -109,18 +103,6 @@ public class Duelist {
 
     public void setPhoto(String photo) {
         this.photo = photo;
-    }
-
-    public ImageAsset getPortrait() {
-        return portrait;
-    }
-
-    public void setPortrait(ImageAsset portrait) {
-        this.portrait = portrait;
-    }
-
-    public String getPortraitUrl() {
-        return portrait == null ? photo : portrait.getUrl();
     }
 
     public String getDemo() {

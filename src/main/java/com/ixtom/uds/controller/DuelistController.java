@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -99,13 +98,11 @@ public class DuelistController {
 
         model.addAttribute("editDuelistRequest", new EditDuelistRequest(duelist.getName(), duelist.getTitle(), duelist.getDescription(), demo));
         model.addAttribute("duelistId", id);
-        model.addAttribute("portraitUrl", duelist.getPortraitUrl());
 
         return "duelist/edit";
     }
 
     @PostMapping("/{id:[0-9]+}/edit")
-    @Transactional
     public String editDuelist(@PathVariable Long id, @Valid @ModelAttribute EditDuelistRequest req, BindingResult bindingResult, @AuthenticationPrincipal UserAuthPrincipal principal, Model model, HttpServletResponse response) {
         Duelist duelist = getDuelist(id);
 
@@ -122,7 +119,6 @@ public class DuelistController {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("duelistId", id);
-            model.addAttribute("portraitUrl", duelist.getPortraitUrl());
             return "duelist/edit";
         }
 
@@ -130,6 +126,8 @@ public class DuelistController {
         duelist.setTitle(req.title());
         duelist.setDescription(req.description());
         duelist.setDemo(videoId);
+
+        duelistRepo.save(duelist);
 
         response.setStatus(HttpServletResponse.SC_SEE_OTHER);
         return "redirect:/duelist/" + id;
