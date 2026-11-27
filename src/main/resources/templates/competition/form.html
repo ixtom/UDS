@@ -28,6 +28,18 @@
             <div class="text-danger" th:if="${#fields.hasErrors('rounds')}" th:errors="*{rounds}"></div>
         </div>
 
+        <div class="form-group">
+            <label for="animationDays">Animation length (days)</label>
+            <input type="number" class="form-control" min="7" max="60" required th:field="*{animationDays}">
+            <div class="text-danger" th:if="${#fields.hasErrors('animationDays')}" th:errors="*{animationDays}"></div>
+        </div>
+
+        <div id="preview" class="alert alert-info" hidden>
+            <div>Each round: <span id="pvRound"></span> days (<span id="pvAnim"></span> animating + 7 voting)</div>
+            <div>Whole competition: <span id="pvTotal"></span> days</div>
+            <div>Ends: <span id="pvEnd"></span></div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Create competition</button>
     </form>
 
@@ -48,6 +60,40 @@
         form.addEventListener("submit", function () {
             startInput.value = local.value ? new Date(local.value).toISOString() : "";
         });
+
+        const roundsInput = document.getElementById("rounds");
+        const animInput = document.getElementById("animationDays");
+        const preview = document.getElementById("preview");
+        const VOTING_DAYS = 7; // keep in sync with Competition.votingDays
+
+        function updatePreview() {
+            const rounds = parseInt(roundsInput.value);
+            const anim = parseInt(animInput.value);
+            if (!rounds || !anim) {
+                preview.hidden = true;
+                return;
+            }
+
+            const cycle = anim + VOTING_DAYS;
+            document.getElementById("pvRound").textContent = cycle;
+            document.getElementById("pvAnim").textContent = anim;
+            document.getElementById("pvTotal").textContent = rounds * cycle;
+
+            if (local.value) {
+                const end = new Date(new Date(local.value).getTime() + rounds * cycle * 86400000);
+                document.getElementById("pvEnd").textContent = end.toLocaleString(undefined, {
+                    month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit"
+                });
+            } else {
+                document.getElementById("pvEnd").textContent = "pick a start date";
+            }
+            preview.hidden = false;
+        }
+
+        roundsInput.addEventListener("input", updatePreview);
+        animInput.addEventListener("input", updatePreview);
+        local.addEventListener("input", updatePreview);
+        updatePreview();
     </script>
 </body>
 </html>

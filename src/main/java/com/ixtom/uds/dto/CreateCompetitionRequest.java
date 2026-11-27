@@ -2,6 +2,7 @@ package com.ixtom.uds.dto;
 
 import java.time.Instant;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,9 +13,16 @@ public record CreateCompetitionRequest(
     @Size(max = 255, message = "Title must be 255 characters or less.")
     String title,
 
-    @NotNull(message = "Pick a start date and time.") Instant start,
+    @NotNull(message = "Pick a start date and time.") 
+    Instant start,
 
     @NotNull(message = "Enter the number of rounds.")
     @Min(value = 2, message = "Must have at least two rounds")
-    Integer rounds
+    Integer rounds,
+
+    @NotNull(message = "Enter the number of days each animation round should last.")
+    @Min(value = 7, message = "must be at least 7 days")
+    @Max(value = 60, message = "must be at most 60 days")
+    Integer animationDays
+
 ) {}
