@@ -24,6 +24,8 @@ public record EditDuelistRequest(
     @Size(max = 20000, message = "Backstory must be less than 20,000 characters long!")
     String description,
 
+    // TODO: duelist photo
+
     @NotNull
     @OptionalSocialLink(type = SocialLink.YOUTUBE_VIDEO)
     String demoVideo
