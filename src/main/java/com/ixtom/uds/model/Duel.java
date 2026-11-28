@@ -74,6 +74,23 @@ public class Duel {
         this.videoid2 = "";
     }
 
+    public Duel(Competition competition, 
+                Integer roundnum, 
+                Duelist duelist1, 
+                Duelist duelist2) {
+        this.competition = competition;
+        this.roundnum = roundnum;
+        this.duelist1 = duelist1;
+        this.duelist2 = duelist2;
+
+        // these are not used but better to be safe
+        this.user1 = duelist1.getOwner();
+        this.user2 = duelist2.getOwner();
+
+        this.videoid1 = "";
+        this.videoid2 = "";
+    }
+
     public Duel() {}
 
     public Long getId() {

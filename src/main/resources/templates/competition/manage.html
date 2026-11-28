@@ -11,8 +11,13 @@
     <div class="container mt-4">
     <a th:href="@{/competitions}">&larr; All competitions</a>
 
+    <div class="alert alert-danger mt-3" th:if="${error}" th:text="${error}"></div>
+
     <h2 class="mt-3" th:text="${competition.title}"></h2>
-    <p>Starts: <time class="convert-to-local-date-and-time" th:datetime="${competition.start}"></time></p>
+    <p>
+        <span th:text="${competition.started() ? 'Started: ' : 'Starts: '}"></span>
+        <time class="convert-to-local-date-and-time" th:datetime="${competition.start}"></time>
+    </p>
     <p>Rounds: <span th:text="${competition.rounds}"></span></p>
     <p>Max participants: <span th:text="${competition.getMaxParticipants()}"></span></p>
 
@@ -22,11 +27,20 @@
         <li th:each="p : ${competition.participants}" th:text="${p.duelist.name} + ' (' + ${p.duelist.owner.username} + ')'"></li>
     </ul>
 
-    <h4 class="mt-4">Matchups (<span th:text="${#lists.size(duels)}"></span>)</h4>
-    <form th:action="@{/admin/competitions/{id}/pair(id=${competition.id})}" method="post">
-        <button type="submit" class="btn btn-primary mb-2">Assign opponents</button>
+    <h4 class="mt-4">Draft matchups (<span th:text="${#lists.size(matchups)}"></span>)</h4>
+    <form th:action="@{/admin/competitions/{id}/matchups(id=${competition.id})}" method="post" class="d-inline">
+        <button type="submit" class="btn btn-primary mb-2">Generate matchups</button>
     </form>
-    <p class="text-muted" th:if="${duels.isEmpty()}">No matchups yet.</p>
+    <form th:action="@{/admin/competitions/{id}/duels(id=${competition.id})}" method="post" class="d-inline">
+        <button type="submit" class="btn btn-success mb-2">Submit matchups</button>
+    </form>
+    <p class="text-muted" th:if="${matchups.isEmpty()}">No draft matchups.</p>
+    <ul>
+        <li th:each="m : ${matchups}" th:text="${m.duelist1.name} + ' vs ' + ${m.duelist2.name}"></li>
+    </ul>
+
+    <h4 class="mt-4">Duels (<span th:text="${#lists.size(duels)}"></span>)</h4>
+    <p class="text-muted" th:if="${duels.isEmpty()}">No duels yet.</p>
     <ul>
         <li th:each="d : ${duels}">
             <a th:href="@{/duelpage/{id}(id=${d.id})}" th:text="${d.defaultTitle}"></a>
