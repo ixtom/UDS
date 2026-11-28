@@ -1,5 +1,6 @@
 package com.ixtom.uds.repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,4 +64,5 @@ public interface DuelRepository extends JpaRepository<Duel, Long> {
     int findLatestRound(Long competitionId);
 
     List<Duel> findByCompetitionIdOrderByRoundnum(Long competitionId);
+    List<Duel> findByEndDateBeforeAndScoredFalse(Instant now);
 }

@@ -1,6 +1,7 @@
 package com.ixtom.uds.controller;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +33,7 @@ import com.ixtom.uds.repository.CompetitionRepository;
 import com.ixtom.uds.repository.DuelRepository;
 import com.ixtom.uds.repository.DuelistRepository;
 import com.ixtom.uds.repository.MatchupRepository;
+import com.ixtom.uds.service.DuelScoringService;
 
 import jakarta.validation.Valid;
 
@@ -52,6 +54,9 @@ public class CompetitionController {
 
     @Autowired 
     private MatchupRepository matchupRepo;
+
+    @Autowired 
+    private DuelScoringService duelScoringService;
 
     @GetMapping("/admin/competitions/new")
     public String getCreateCompetition(Model model) {
@@ -95,6 +100,11 @@ public class CompetitionController {
             boolean canLeave = !canJoin && canLeaveCompetition(competition, principal.getId());
             model.addAttribute("canJoin", canJoin);
             model.addAttribute("canLeave", canLeave);
+        }
+
+        List<Duel> duels = duelRepo.findByCompetitionIdOrderByRoundnum(id);
+        for(Duel duel : duels){
+            duelScoringService.finalizeDuelIfEnded(duel);
         }
 
         model.addAttribute("competition", competition);
@@ -258,7 +268,11 @@ public class CompetitionController {
         }
 
         for (Matchup matchup : matchups) {
-            duelRepo.save(new Duel(competition, round, matchup.getDuelist1(), matchup.getDuelist2()));
+            Duel duel = new Duel(competition, round, matchup.getDuelist1(), matchup.getDuelist2());
+            Instant now = Instant.now();
+            duel.setStartDate(now);
+            duel.setEndDate(now.plus(30, ChronoUnit.DAYS));
+            duelRepo.save(duel);
         }
         matchupRepo.deleteByCompetitionId(id);
 

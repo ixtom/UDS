@@ -1,6 +1,7 @@
 package com.ixtom.uds.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +24,5 @@ public interface CompetitionEntryRepository extends JpaRepository<CompetitionEnt
     public void deleteByCompetitionIdAndDuelistOwnerId(Long competitionId, Long userId);
 
     public List<CompetitionEntry> findByCompetitionIdOrderByScoreDescDuelistNameAsc(Long competitionId);
+    Optional<CompetitionEntry> findByCompetitionIdAndDuelistId(Long competitionId, Long duelistId);
 }

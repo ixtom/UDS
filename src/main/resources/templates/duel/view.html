@@ -40,12 +40,79 @@
             <iframe th:if="${!#strings.isEmpty(duel.videoid2)}" width="420" height="345"
                     th:src="|https://www.youtube-nocookie.com/embed/${duel.videoid2}|"></iframe>
         </section>
-        <!-- Voting Section!!!
-        <section class="voting">
-            <h2>Vote</h2>
-            <p>Voting coming soon.</p>
+        <section class="voting">            
+            <div th:if="${isLoggedIn && isVotingOpen}">
+                <form th:action="@{/duelpage/{id}(id=${duel.id})}"
+                    th:object="${voteRequest}" method="post">
+                    <div>
+                        <label for="cat1winner">Category 1</label>
+                        <select th:field="*{cat1winner}">
+                            <option th:if="${duel.duelist1 != null}"
+                                    th:value="${duel.duelist1?.id}"
+                                    th:text="${duel.duelist1?.name}"></option>
+                            <option th:if="${duel.duelist2 != null}"
+                                    th:value="${duel.duelist2?.id}"
+                                    th:text="${duel.duelist2?.name}"></option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="cat2winner">Category 2</label>
+                        <select th:field="*{cat2winner}">
+                            <option th:if="${duel.duelist1 != null}"
+                                    th:value="${duel.duelist1?.id}"
+                                    th:text="${duel.duelist1?.name}"></option>
+                            <option th:if="${duel.duelist2 != null}"
+                                    th:value="${duel.duelist2?.id}"
+                                    th:text="${duel.duelist2?.name}"></option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="cat3winner">Category 3</label>
+                        <select th:field="*{cat3winner}">
+                            <option th:if="${duel.duelist1 != null}"
+                                    th:value="${duel.duelist1?.id}"
+                                    th:text="${duel.duelist1?.name}"></option>
+                            <option th:if="${duel.duelist2 != null}"
+                                    th:value="${duel.duelist2?.id}"
+                                    th:text="${duel.duelist2?.name}"></option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="cat4winner">Category 4</label>
+                        <select th:field="*{cat4winner}">
+                            <option th:if="${duel.duelist1 != null}"
+                                    th:value="${duel.duelist1?.id}"
+                                    th:text="${duel.duelist1?.name}"></option>
+                            <option th:if="${duel.duelist2 != null}"
+                                    th:value="${duel.duelist2?.id}"
+                                    th:text="${duel.duelist2?.name}"></option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="cat5winner">Category 5</label>
+                        <select th:field="*{cat5winner}">
+                            <option th:if="${duel.duelist1 != null}"
+                                    th:value="${duel.duelist1?.id}"
+                                    th:text="${duel.duelist1?.name}"></option>
+                            <option th:if="${duel.duelist2 != null}"
+                                    th:value="${duel.duelist2?.id}"
+                                    th:text="${duel.duelist2?.name}"></option>
+                        </select>
+                    </div>
+                    <button type="submit">Vote</button>
+                </form>
+            </div>
+            <p th:if="${!isLoggedIn}">
+                <a th:href="@{/login}">Log in to vote</a>
+            </p>
+            <p th:if="${isLoggedIn && !isVotingOpen}">
+                Voting has ended.
+            </p>
         </section>
-        -->
     </main>
 </body>
 </html>
