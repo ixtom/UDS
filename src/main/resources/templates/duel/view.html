@@ -9,6 +9,7 @@
 <body>
     <div th:replace="~{fragments/navbar :: navbar}"></div>
     <main>
+        <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
         <header>
             <h1 th:text="${duel.defaultTitle}">Duel Title</h1>
         </header>
@@ -33,13 +34,18 @@
             </article>
         </section>
 
-        <section class="animations" th:if="${!#strings.isEmpty(duel.videoid1) or !#strings.isEmpty(duel.videoid2)}">
+        <section class="animations" th:if="${showVideos and (!#strings.isEmpty(duel.videoid1) or !#strings.isEmpty(duel.videoid2))}">
             <h2>Animations</h2>
             <iframe th:if="${!#strings.isEmpty(duel.videoid1)}" width="420" height="345"
                     th:src="|https://www.youtube-nocookie.com/embed/${duel.videoid1}|"></iframe>
             <iframe th:if="${!#strings.isEmpty(duel.videoid2)}" width="420" height="345"
                     th:src="|https://www.youtube-nocookie.com/embed/${duel.videoid2}|"></iframe>
         </section>
+        <section th:if="${!showVideos}">
+            <p class="text-muted">Animations are hidden until voting opens.</p>
+        </section>
+
+        <a th:if="${canEdit}" th:href="@{/duel/{id}/edit(id=${duel.id})}" class="btn btn-primary">Upload or change my video</a>
         <!-- Voting Section!!!
         <section class="voting">
             <h2>Vote</h2>

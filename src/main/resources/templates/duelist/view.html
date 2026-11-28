@@ -32,6 +32,35 @@
             <main>
                 <h2>Description / Backstory</h2>
                 <p th:text="${duelist.description}" style="white-space: pre-line;"></p>
+
+                <section aria-labelledby="duel-history-heading">
+                    <h2 id="duel-history-heading">Duels</h2>
+                    <p th:if="${duelHistory.isEmpty()}">No duels yet.</p>
+                    <ul th:unless="${duelHistory.isEmpty()}">
+                        <li th:each="duel : ${duelHistory}"
+                            th:with="opponent=${duel.duelist1?.id == duelist.id ? duel.duelist2 : duel.duelist1}">
+                            <a th:href="@{/duelpage/{id}(id=${duel.id})}" th:text="${duel.defaultTitle}"></a>
+                            <span th:if="${opponent != null and !#strings.isEmpty(duel.title)}"
+                                  th:text="| · vs ${opponent.name}|"></span>
+                            <span th:if="${duel.competition == null}"> · Standalone duel</span>
+                            <span th:if="${duel.competition != null}" th:text="| · ${duel.competition.title}|"></span>
+                            <span th:if="${duel.competition != null and duel.roundnum != null and !#strings.isEmpty(duel.title)}"
+                                  th:text="|, round ${duel.roundnum}|"></span>
+                        </li>
+                    </ul>
+                </section>
+
+                <section aria-labelledby="competition-history-heading">
+                    <h2 id="competition-history-heading">Competitions</h2>
+                    <p th:if="${competitionHistory.isEmpty()}">No competitions yet.</p>
+                    <ul th:unless="${competitionHistory.isEmpty()}">
+                        <li th:each="item : ${competitionHistory}">
+                            <a th:href="@{/competitions/{id}(id=${item.competition.id})}"
+                               th:text="${item.competition.title}"></a>
+                            <span th:text="${item.hasMatchup ? ' · Matchup recorded' : ' · Registered'}"></span>
+                        </li>
+                    </ul>
+                </section>
             </main>
         </div>
     </div>

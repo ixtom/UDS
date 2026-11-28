@@ -13,6 +13,7 @@
             <label for="video" class="form-label">YouTube URL</label>
             <input type="text" th:field="*{video}" class="form-control-sm">
             <span th:if="${#fields.hasErrors('video')}" th:errors="*{video}"></span>
+            <small class="form-text text-muted">Set your video to Unlisted on YouTube until voting opens. The site hides it until then, but a public video can still be found on your channel.</small>
         </div>
         <hr>
         <h2>Shared data</h2>

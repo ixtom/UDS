@@ -1,5 +1,7 @@
 package com.ixtom.uds.controller;
 
+import java.time.Instant;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,9 +13,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ixtom.uds.dto.EditDuelRequest;
 import com.ixtom.uds.dto.NewDuelRequest;
+import com.ixtom.uds.model.Competition;
 import com.ixtom.uds.model.Duel;
 import com.ixtom.uds.model.UserAuthPrincipal;
 import com.ixtom.uds.repository.DuelRepository;
@@ -35,8 +39,16 @@ public class DuelController {
     // }
 
     @GetMapping("/duelpage/{id}")
-    public String duelPage(@PathVariable Long id, Model model) {
-        model.addAttribute("duel", getDuel(id));
+    public String duelPage(@PathVariable Long id, @AuthenticationPrincipal UserAuthPrincipal principal, Model model) {
+        Duel duel = getDuel(id);
+
+        boolean released = duel.getCompetition() == null || uploadsClosed(duel);
+        boolean isOwner = isOwner(duel, principal);
+        boolean isAdmin = principal != null && principal.hasRole("ADMIN");
+
+        model.addAttribute("duel", duel);
+        model.addAttribute("showVideos", released || isOwner || isAdmin);
+        model.addAttribute("canEdit", isOwner && !released);
 
         return "duel/view";
     }
@@ -71,7 +83,7 @@ public class DuelController {
     // }
 
     @GetMapping("/duel/{id}/edit")
-    public String getEditDuel(@PathVariable Long id, @AuthenticationPrincipal UserAuthPrincipal principal, Model model) {
+    public String getEditDuel(@PathVariable Long id, @AuthenticationPrincipal UserAuthPrincipal principal, Model model, RedirectAttributes redirect) {
         Duel duel = getDuel(id);
         if (principal == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -84,6 +96,11 @@ public class DuelController {
             leftSide = false;
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+
+        if (uploadsClosed(duel)) {
+            redirect.addFlashAttribute("error", "Uploads for this round are closed.");
+            return "redirect:/duelpage/" + id;
         }
 
         String video = leftSide ? duel.getVideoid1() : duel.getVideoid2();
@@ -98,7 +115,7 @@ public class DuelController {
     }
 
     @PostMapping("/duel/{id}/edit")
-    public String editDuel(@PathVariable Long id, @AuthenticationPrincipal UserAuthPrincipal principal, @Valid @ModelAttribute EditDuelRequest req, BindingResult bindingResult) {
+    public String editDuel(@PathVariable Long id, @AuthenticationPrincipal UserAuthPrincipal principal, @Valid @ModelAttribute EditDuelRequest req, BindingResult bindingResult, RedirectAttributes redirect) {
         Duel duel = getDuel(id);
         if (principal == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
@@ -111,6 +128,11 @@ public class DuelController {
             leftSide = false;
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        
+        if (uploadsClosed(duel)) {
+            redirect.addFlashAttribute("error", "Uploads for this round are closed.");
+            return "redirect:/duelpage/" + id;
         }
 
         if (bindingResult.hasErrors()) {
@@ -138,5 +160,22 @@ public class DuelController {
 
     private Duel getDuel(Long id) {
         return duelRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    private boolean uploadsClosed(Duel duel) {
+        Competition competition = duel.getCompetition();
+        if (competition == null || duel.getRoundnum() == null) {
+            return false;
+        }
+        return !Instant.now().isBefore(competition.votingStart(duel.getRoundnum()));
+    }
+
+    private boolean isOwner(Duel duel, UserAuthPrincipal principal) {
+        if (principal == null) {
+            return false;
+        }
+        Long me = principal.getId();
+        return (duel.getUser1() != null && duel.getUser1().getId().equals(me))
+            || (duel.getUser2() != null && duel.getUser2().getId().equals(me));
     }
 }
